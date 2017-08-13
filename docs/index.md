@@ -97,9 +97,15 @@ Models | Variables Chosen | R-sqaured Value (Multivariate Regression)
 Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.91
 Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.89
 
+Pretty Good!
+
 ## Crossvalidated Linear Regression
 
-Next, we build the models for heating and cooling loads using cross validation. In this case, six folds are being used on the entire dataset to build the models. The code below illustrates the input for the heating load model
+Next, we build the models for heating and cooling loads using cross validation. In the above technique, we manually split the data into training and validation sets. In k-fold cross validation, we divide the entire dataset into k-folds, using k-1 folds for training and the remaining data for validation. Using this technique iteratively over all folds allows us to build a more effective model. Let's see if this leads to a better model quality
+
+![CV Image](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/K-fold%20CV.PNG)
+
+In this case, six folds are being used on the entire dataset to build the models. The code below illustrates the input for the heating load model. The variables of significance obtained from multivariate regression are used to build the crossvalidated model.
 
 In[66]
 
@@ -108,7 +114,7 @@ Model_HL_CV <- lm( Heating_Load ~ Relative_Compactness+Surface_Area+Wall_Area+Ov
 CV_HL <- cv.lm(table, Model_HL_CV, m=6,plotit = FALSE)
 
 ```
-The table below summarized the results obtained from cross validation and compares them against those from the multivariate linear regression.
+The table below summarized the results obtained from cross validation and compares them against those from the multivariate linear regression. 
 
 #### Summary
 
@@ -117,6 +123,7 @@ Models | Variables Chosen | R2 (Multivariate Regression)| R2 (Crossvalidated Reg
 Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.91 |0.91
 Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.89 |0.89
 
+The R-squared values obtained are the same as that obtained from multivariate regression. 0.91 and 0.89 are pretty good values and suggest that basic linear regression might be enough to understand the dependencies of Heating and Cooling Loads on the explanatory variables. However, to avoid running the risk of being too optimistic, we will use some state-of-the-art machine learning tools to build a robust model. 
 
 # Feature Extraction
 ## Stepwise Linear Regressio
