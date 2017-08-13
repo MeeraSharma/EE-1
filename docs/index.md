@@ -16,7 +16,7 @@ on Heating and Cooling Loads of 768 diverse residential buildings.
 First, we train the models on 80% of the available data and then, perform model validation on the remaining 20% of the data. 
 Various approaches are used to build a refined model, starting with classical approaches and building up to state-of-the-art nonlinear non-parametric methods. The approaches covered are:
 
-* [create an anchor](multivariate-linear-regression)
+* [Multivariate Linear Regression](multivariate-linear-regression)
 * Stepwise Linear Regression
 * Feature Extraction using Principal Component Analysis and Lasso Regression, followed by Regression 
 * Classification and Regression Trees
