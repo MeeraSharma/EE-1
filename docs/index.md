@@ -1,3 +1,3 @@
 theme: jekyll-theme-cayman
 title: Welcome
-!(Residential-Energy-Efficiency-SLR.github.io/docs/Model2_HL.PNG)
+![Image of Model2_HL](Residential-Energy-Efficiency-SLR.github.io/docs/Model2_HL.PNG)
