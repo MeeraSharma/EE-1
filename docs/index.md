@@ -17,7 +17,10 @@ The model building approaches considered include:
  
  Let's begin my previewing the data. 
  
- In: ![Viewing Initial Data](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Viewing%20Data.PNG)
+In: ![Viewing Initial Data](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Viewing%20Data.PNG)
+
+Out: ![Data Table](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Viewing%20Data.PNG)
+
 
 # Linear Regression
 ## Multivariate Linear Regression
