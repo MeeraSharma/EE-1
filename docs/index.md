@@ -92,13 +92,30 @@ The same process of model building and refinement is used for the Cooling Load. 
 
 #### Summary
 
-Models | Variables Chosen | R-sqaured Value
+Models | Variables Chosen | R-sqaured Value (Multivariate Regression)
 -------|------------------|-----------------
 Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.91
 Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.89
 
 ## Crossvalidated Linear Regression
 
+Next, we build the models for heating and cooling loads using cross validation. In this case, six folds are being used on the entire dataset to build the models. The code below illustrates the input for the heating load model
+
+In[66]
+
+```
+Model_HL_CV <- lm( Heating_Load ~ Relative_Compactness+Surface_Area+Wall_Area+Overall_Height+Glazing_Area, data = table)
+CV_HL <- cv.lm(table, Model_HL_CV, m=6,plotit = FALSE)
+
+```
+The table below summarized the results obtained from cross validation and compares them against those from the multivariate linear regression.
+
+#### Summary
+
+Models | Variables Chosen | R2 (Multivariate Regression)| R2 (Crossvalidated Regression)
+-------|------------------|-----------------
+Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.91 |0.91
+Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.89 |0.89
 
 
 # Feature Extraction
