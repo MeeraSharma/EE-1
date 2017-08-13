@@ -113,7 +113,7 @@ The table below summarized the results obtained from cross validation and compar
 #### Summary
 
 Models | Variables Chosen | R2 (Multivariate Regression)| R2 (Crossvalidated Regression)
--------|------------------|-----------------
+-------|------------------|-----------------|-------------------------------------------
 Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.91 |0.91
 Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.89 |0.89
 
