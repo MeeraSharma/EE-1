@@ -22,7 +22,8 @@ In:
 install.packages("xlsx")
 library(xlsx)
 table <- read.xlsx("EE Residential Buildings.xlsx",1)
-colnames(table) <- c("Relative_Compactness", "Surface_Area", "Wall_Area", "Roof_Area", "Overall_Height", "Orientation", "Glazing_Area", "Glazing_Area_Distribution", "Heating_Load", "Cooling_Load")
+colnames(table) <- c("Relative_Compactness", "Surface_Area", "Wall_Area", "Roof_Area", 
+"Overall_Height", "Orientation", "Glazing_Area", "Glazing_Area_Distribution", "Heating_Load", "Cooling_Load")
 View(table)
 ```
 
