@@ -28,7 +28,7 @@ Out: ![Data Table](https://raw.githubusercontent.com/MeeraSharma/Residential-Ene
 Heating and Cooling Load Analysis of Residential Buildings using Multivariate Linear Regression
 ![Image of Model2](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency-SLR.github.io/master/docs/Model2_HL.PNG)
 # Feature Extraction
-## Stepwise Linear Regression
+## Stepwise Linear Regressio
 ## Principal Component Analysis
 ## Lasso Regression
 # Classification and Regression Trees
