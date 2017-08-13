@@ -1,2 +1,3 @@
-layout: default
-title: Energy Efficiency in Residential Buildings
+theme: jekyll-theme-cayman
+title: Welcome
+![Image](https://octodex.github.com/images/yaktocat.png)
