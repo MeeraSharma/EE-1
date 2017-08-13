@@ -17,7 +17,7 @@ The model building approaches considered include:
  
  Let's begin by previewing the data. 
  
-In: 
+In [1]: 
 ```
 install.packages("xlsx")
 library(xlsx)
@@ -27,7 +27,7 @@ colnames(table) <- c("Relative_Compactness", "Surface_Area", "Wall_Area", "Roof_
 View(table)
 ```
 
-Out: 
+Out[1]: 
 
 Relative Compactness|Surface Area|Wall Area|Roof Area|Overall Height|Orientation|Glazing Area|Glazing Area Distribution
 --------------------|------------|---------|---------|--------------|-----------|------------|-------------------------
