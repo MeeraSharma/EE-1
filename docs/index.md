@@ -19,7 +19,7 @@ The model building approaches considered include:
  
 In: ![Viewing Initial Data](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Viewing%20Data.PNG)
 
-Out: ![Data Table](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Viewing%20Data.PNG)
+Out: ![Data Table](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/DataTable.PNG)
 
 
 # Linear Regression
