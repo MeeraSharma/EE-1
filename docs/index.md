@@ -27,8 +27,57 @@ colnames(table) <- c("Relative_Compactness", "Surface_Area", "Wall_Area", "Roof_
 View(table)
 ```
 
-Out: ![Data Table](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/DataTable.JPG)
+Out: 
 
+Relative Compactness|Surface Area|Wall Area|Roof Area|Overall Height|Orientation|Glazing Area|Glazing Area Distribution
+--------------------|------------|---------|---------|--------------|-----------|------------|-------------------------
+0.98 514.5 294.0 110.25 7.0 2 0.0 0
+15.550
+21.33
+2
+0.98
+514.5
+294.0
+110.25
+7.0
+3
+0.0
+0
+15.550
+21.33
+3
+0.98
+514.5
+294.0
+110.25
+7.0
+4
+0.0
+0
+15.550
+21.33
+4
+0.98
+514.5
+294.0
+110.25
+7.0
+5
+0.0
+0
+15.550
+21.33
+5
+0.90
+563.5
+318.5
+122.50
+7.0
+2
+0.0
+0
+20.840
+28.28
 
 # Linear Regression
 ## Multivariate Linear Regression
