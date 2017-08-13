@@ -16,6 +16,7 @@ The model building approaches considered include:
  * [Random Forests](random-forests)
  
  Let's begin my previewing the data. 
+ 
  In: ![Viewing Initial Data](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Viewing%20Data.PNG)
 
 # Linear Regression
