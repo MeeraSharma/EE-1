@@ -15,7 +15,7 @@ The model building approaches considered include:
  * [Classification and Regression Trees](classification-and-regression-trees)
  * [Random Forests](random-forests)
  
- Let's begin my previewing the data. 
+ Let's begin by previewing the data. 
  
 In: ![Viewing Initial Data](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Viewing%20Data.JPG)
 
