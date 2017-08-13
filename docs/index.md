@@ -82,9 +82,13 @@ F-statistic: 928.5 on 7 and 607 DF,  p-value: < 2.2e-16
 Based on the output, Relative Compactness, Surface Area, Wall Area, Overall Height, and Glazing Area are used to refine the model. The new model is then validated using the Validated dataset (R-squared = 0.92). The figure below shows how the predicted heating loads (on the validation dataset) compare to the actual heating loads.
 
 Heating and Cooling Load Analysis of Residential Buildings using Multivariate Linear Regression
-![Image of Model2](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency-SLR.github.io/master/docs/Model2_HL.PNG)
+![HL](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Basic%20Linear%20Regression_HL.PNG)
 
+### Cooling Load
 
+The same process of model building and refinement is used for the Cooling Load. The variables chosen are: Relative Compactness, Surface Area, Wall Area, Overall Height, and Glazing Area (R-squared = 0.88). The figure below compares the predicted cooling loads with the actual cooling loads of the validation dataset.
+
+![CL](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Basic%20Linear%20Regression_CL.PNG)
 ## Crossvalidated Linear Regression
 
 # Feature Extraction
