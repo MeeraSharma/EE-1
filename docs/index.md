@@ -86,10 +86,20 @@ Heating and Cooling Load Analysis of Residential Buildings using Multivariate Li
 
 ### Cooling Load
 
-The same process of model building and refinement is used for the Cooling Load. The variables chosen are: Relative Compactness, Surface Area, Wall Area, Overall Height, and Glazing Area (R-squared = 0.88). The figure below compares the predicted cooling loads with the actual cooling loads of the validation dataset.
+The same process of model building and refinement is used for the Cooling Load. The variables chosen are: Relative Compactness, Surface Area, Wall Area, Overall Height, and Glazing Area (R-squared = 0.89). The figure below compares the predicted cooling loads with the actual cooling loads of the validation dataset.
 
 ![CL](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Basic%20Linear%20Regression_CL.PNG)
+
+#### Summary
+
+Models | Variables Chosen | R-sqaured Value
+-------|------------------|-----------------
+Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.91
+Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.89
+
 ## Crossvalidated Linear Regression
+
+
 
 # Feature Extraction
 ## Stepwise Linear Regressio
