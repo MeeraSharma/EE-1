@@ -5,9 +5,7 @@ In this analysis, we study the influence of eight predictor variables, namely **
 Models are trained on 80% of the available data and validated on the remaining 20% to avoid overfitting. 
 The model building approaches considered include:
 
-* [Linear Regression](linear-regression)
-  * [Multivariation Linear Regression](multivariate-linear-regression)
-  * [Crossvalidated Linear Regression](crossvalidated-linear-regression)
+* [Basic Linear Regression](basic-linear-regression)
 * [Feature Extraction](feature-extraction)
   * [Stepwise Linear Regression](stepwise-linear-regression)
   * [Principal Component Analysis](principal-component-analysis)
@@ -36,8 +34,52 @@ Relative Compactness|Surface Area|Wall Area|Roof Area|Overall Height|Orientation
 0.98|514.5|294|110.25|7|4|0|0|15.55|21.33
 0.98|514.5|294|110.25|7|5|0|0|15.55|21.33
 
-# Linear Regression
+# Basic Linear Regression
 ## Multivariate Linear Regression
+We will begin by first exploring the importance of each explantory variable. 
+
+In [16]
+
+```
+Model1_HL <- lm(Heating_Load ~ Relative_Compactness+Surface_Area+Wall_Area+Roof_Area+Overall_Height+Orientation+Glazing_Area+
+Glazing_Area_Distribution, data = train)
+summary(Model1_HL)
+
+```
+
+Out [16]
+
+```
+Call:
+lm(formula = Heating_Load ~ Relative_Compactness + Surface_Area + 
+    Wall_Area + Roof_Area + Overall_Height + Orientation + Glazing_Area + 
+    Glazing_Area_Distribution, data = train)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-9.5460 -1.2746  0.0174  1.3329  8.0884 
+
+Coefficients: (1 not defined because of singularities)
+                            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                84.211417  21.033488   4.004 7.01e-05 ***
+Relative_Compactness      -63.457403  11.361624  -5.585 3.52e-08 ***
+Surface_Area               -0.088772   0.018884  -4.701 3.21e-06 ***
+Wall_Area                   0.063204   0.007385   8.558  < 2e-16 ***
+Roof_Area                         NA         NA      NA       NA    
+Overall_Height              3.953196   0.377263  10.479  < 2e-16 ***
+Orientation                -0.016103   0.106863  -0.151  0.88027    
+Glazing_Area               19.510954   0.908273  21.481  < 2e-16 ***
+Glazing_Area_Distribution   0.244939   0.077523   3.160  0.00166 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 2.919 on 607 degrees of freedom
+Multiple R-squared:  0.9146,	Adjusted R-squared:  0.9136 
+F-statistic: 928.5 on 7 and 607 DF,  p-value: < 2.2e-16
+```
+
+### Heating Load
+
 ## Crossvalidated Linear Regression
 Heating and Cooling Load Analysis of Residential Buildings using Multivariate Linear Regression
 ![Image of Model2](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency-SLR.github.io/master/docs/Model2_HL.PNG)
