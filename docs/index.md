@@ -36,7 +36,8 @@ Relative Compactness|Surface Area|Wall Area|Roof Area|Overall Height|Orientation
 
 # Basic Linear Regression
 ## Multivariate Linear Regression
-We will begin by first exploring the importance of each explantory variable. 
+First, all explantory variables are used to construct the linear regression model. After exploring the importance of each variable, only those whose *p-value is less than 0.05* are chosen to build a refined model.
+### Heating Load
 
 In [16]
 
@@ -78,11 +79,14 @@ Multiple R-squared:  0.9146,	Adjusted R-squared:  0.9136
 F-statistic: 928.5 on 7 and 607 DF,  p-value: < 2.2e-16
 ```
 
-### Heating Load
+Based on the output, Relative Compactness, Surface Area, Wall Area, Overall Height, and Glazing Area are used to refine the model. The new model is then validated using the Validated dataset (R-squared = 0.92). The figure below shows how the predicted heating loads (on the validation dataset) compare to the actual heating loads.
 
-## Crossvalidated Linear Regression
 Heating and Cooling Load Analysis of Residential Buildings using Multivariate Linear Regression
 ![Image of Model2](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency-SLR.github.io/master/docs/Model2_HL.PNG)
+
+
+## Crossvalidated Linear Regression
+
 # Feature Extraction
 ## Stepwise Linear Regressio
 ## Principal Component Analysis
