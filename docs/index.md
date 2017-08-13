@@ -126,7 +126,31 @@ Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, G
 The R-squared values obtained are the same as that obtained from multivariate regression. 0.91 and 0.89 are pretty good values and suggest that basic linear regression might be enough to understand the dependencies of Heating and Cooling Loads on the explanatory variables. However, to avoid running the risk of being too optimistic, we will use some state-of-the-art machine learning tools to build a robust model. 
 
 # Feature Extraction
-## Stepwise Linear Regressio
+
+In cases where the number of variables is too large, it might not be possible to refine the models based on the p-values manually. In such scenarios, we might want to employ techniques that will allow us to *extract pertinent features* without manual intervention. The goal of feature extraction techniques is to identify variables that are most important in building a model. Using fewer variables leads to simpler models that not only are easier to understand, but also require less data collection. Secondly, when the number of variables gets too close to the number of data points, there is a risk of overfitting. 
+  
+## Stepwise Linear Regression
+
+Stepwise Linear Regression is a combination of forward selection and backward elimination approaches. At each step in the procedure, the model is evaluated and any variable that no longer seems necessary is removed. The code below illustrates the model built for heating loads.
+
+```
+In [96]
+
+HL_step <- step(Model1_HL, direction = "both")
+summary(HL_step)
+residuals_HL_step <- validate$Heating_Load - predict(HL_step, validate)
+HL_step_Rsqaured <- 1-sum(residuals_HL_step^2)/sum((validate$Heating_Load-mean(validate$Heating_Load))^2)
+HL_step_Rsqaured
+
+```
+
+#### Summary
+
+Models | Variables Chosen | R2 (Multivariate Regression)| R2 (Crossvalidated Regression)|R2 (Stepwise Regression)
+-------|------------------|-----------------|-------------------------------------------|----------------------
+Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.91 |0.91|0.92
+Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.89 |0.89|0.89
+
 ## Principal Component Analysis
 ## Lasso Regression
 # Classification and Regression Trees
