@@ -92,10 +92,10 @@ The same process of model building and refinement is used for the Cooling Load. 
 
 #### Summary
 
-Models | Variables Chosen | R-sqaured Value (Multivariate Regression)
+Models | Multivariate Regression-Variables Chosen, R2 
 -------|------------------|-----------------
-Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.91
-Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.89
+Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.91
+Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89
 
 Pretty Good!
 
@@ -118,10 +118,10 @@ The table below summarized the results obtained from cross validation and compar
 
 #### Summary
 
-Models | Variables Chosen | R2 (Multivariate Regression)| R2 (Crossvalidated Regression)
--------|------------------|-----------------|-------------------------------------------
-Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.91 |0.91
-Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.89 |0.89
+Models | Multivariate Regression-Variables Chosen, R2 | CV Regression, R2 
+-------|------------------|-----------------|
+Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.91 | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.91 
+Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89 | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89 
 
 The R-squared values obtained are the same as that obtained from multivariate regression. 0.91 and 0.89 are pretty good values and suggest that basic linear regression might be enough to understand the dependencies of Heating and Cooling Loads on the explanatory variables. However, to avoid running the risk of being too optimistic, we will use some state-of-the-art machine learning tools to build a robust model. 
 
@@ -146,13 +146,63 @@ HL_step_Rsqaured
 
 #### Summary
 
-Models | Variables Chosen | R2 (Multivariate Regression)| R2 (Crossvalidated Regression)|R2 (Stepwise Regression)
--------|------------------|-----------------|-------------------------------------------|----------------------
-Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.91 |0.91|0.92
-Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area | 0.89 |0.89|0.89
+Models | Multivariate Regression-Variables Chosen, R2 | CV Regression, R2 | Stepwise Regression, R2
+-------|------------------|-----------------|
+Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.91 | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.91 |, Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.92
+Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89 | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89 |Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89
+
+
+Stepwise Regression is a type of **Greedy Algotrithm**. At each step, it does the one thing that looks best without taking future options into consideration. Next, we will look at a more refined method that is based on optimization models and considers all options before making a decision.
+
+## Lasso Regression
+
+![Lasso](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Lasso%20Regression.PNG)
+
+Optimization leads the model to choose coefficiencts of the regression equation such that the residual errors are minimal. Lasso Regression adds a constraint to the model such that the sum of the coefficients isn't too large. The restriction ensures that only the most important variables are chosen to build the model. 
+
+Since we are constraining the sum of coefficients, we first need to scale the data.
+
+In [111]
+
+```
+scaledTable <- as.data.frame(scale(table[,c(1,2,3,4,5,6,7,8)]))
+scaledTable <- cbind(scaledtable, table[,c(9,10)]) # Add response variables back in
+install.packages("glmnet")
+library(glmnet)
+lasso_HL <- cv.glmnet(x = as.matrix(scaledTable[, c(1,2,3,4,5,6,7,8)]), y = as.vector(scaledTable[ ,9]), alpha=1, nfolds = 10, type.measure = "mse", family = "gaussian")
+coef(lasso_HL)
+mod_lasso_HL <- lm(Heating_Load~Wall_Area+Overall_Height+Glazing_Area+Glazing_Area_Distribution, data = scaledTable)
+summary(mod_lasso_HL)
+```
+
+Out [111]
+
+```
+Coefficients:
+                          Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                 22.307      0.109  204.61   <2e-16 ***
+Wall_Area                    2.254      0.114   19.83   <2e-16 ***
+Overall_Height               8.341      0.114   73.38   <2e-16 ***
+Glazing_Area                 2.655      0.112   23.78   <2e-16 ***
+Glazing_Area_Distribution    0.316      0.112    2.83   0.0048 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 3.02 on 763 degrees of freedom
+Multiple R-squared:  0.911,	Adjusted R-squared:  0.91 
+F-statistic: 1.95e+03 on 4 and 763 DF,  p-value: <2e-16
+```
+
+Similar approach can be applied for the Cooling Load. The results are summarized below:
+
+#### Summary
+Models | Multivariate Regression-Variables Chosen, R2 | CV Regression, R2 | Stepwise Regression, R2
+-------|------------------|-----------------|
+Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.91 | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.91 |, Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.92
+Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89 | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89 |Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89
+
 
 ## Principal Component Analysis
-## Lasso Regression
 # Classification and Regression Trees
 # Random Forests
 
