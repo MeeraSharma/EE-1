@@ -432,4 +432,6 @@ Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA,
 This post evaluates various methods to model and predict Heating and Cooling Loads of various residential buildings. The analysis shows that while a basic multivariate regression might be sufficient to build a model, advanced feature extraction techniques and classification and regression techniques are also feasible, and in some cases even better.
 
 
-###### Reference: GTx: ISYE6501 Introduction to Analytics Modeling
+###### References
+1. Data: http://archive.ics.uci.edu/ml/datasets/Energy+efficiency
+2. GTx: ISYE6501 Introduction to Analytics Modeling
