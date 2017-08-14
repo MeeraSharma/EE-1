@@ -6,12 +6,12 @@ Models are trained on 80% of the available data and validated on the remaining 2
 The model building approaches considered include:
 
 * [Basic Linear Regression](#basic-linear-regression)
-* [Feature Extraction](feature-extraction)
-  * [Stepwise Linear Regression](stepwise-linear-regression)
-  * [Principal Component Analysis](principal-component-analysis)
-  * [Lasso Regression](lasso-regression)
- * [Classification and Regression Trees](classification-and-regression-trees)
- * [Random Forests](random-forests)
+* [Feature Extraction](#feature-extraction)
+  * [Stepwise Linear Regression](#stepwise-linear-regression)
+  * [Principal Component Analysis](#principal-component-analysis)
+  * [Lasso Regression](#lasso-regression)
+ * [Classification and Regression Trees](#classification-and-regression-trees)
+ * [Random Forests](#random-forests)
  
  Let's begin by previewing the data. 
  
