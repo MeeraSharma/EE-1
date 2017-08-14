@@ -427,5 +427,6 @@ Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | S
 Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91| RC, SA, WA, OH, 0.88| GA, OH, RC 0.95 | 0.995
 Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88 | RC, SA, WA, OH, 0.84| GA, RC, WA 0.90 | 0.96
 
+# Conclusion
 
-
+This post evaluates various methods to model and predict Heating and Cooling Loads of various residential buildings. The analysis shows that while a basic multivariate regression might be sufficient to build a model, advanced feature extraction techniques and classification and regression techniques are also feasible, and in some cases even better.
