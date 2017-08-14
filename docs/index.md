@@ -284,8 +284,8 @@ The output above shows the model in terms of the first five principle components
 
 Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | Stepwise Regression-Variables, R2| Lasso Regression-Variables, R2|PCA-Variables, R2
 -------|------------------|-----------------|-----------------|-----------------------|------
-Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91| RC, SA, WA, OH, 0.88
-Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88 | RC, SA, WA, OH, 0.84
+Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91| All, 0.88
+Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88 | All, 0.84
 
 While the R-squared values found via PCA are lower than those found from other methods, the constructed model is considered to be of good quality (since R2 > 0.7)
 
@@ -361,8 +361,8 @@ The same process can be applied to the Cooling Loads.
 
 Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | Stepwise Regression-Variables, R2| Lasso Regression-Variables, R2|PCA-Variables, R2 | CARTVariables, R2
 -------|------------------|-----------------|-----------------|-----------------------|------|---------
-Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91| RC, SA, WA, OH, 0.88| GA, OH, RC 0.95
-Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88 | RC, SA, WA, OH, 0.84| GA, RC, WA 0.90
+Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91| All, 0.88| GA, OH, RC 0.95
+Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88 | All, 0.84| GA, RC, WA 0.90
 
 We can see how the **Classification and Regression Trees** has led to a sharp increase in the R-squared value. 
 
@@ -424,8 +424,8 @@ The same process can be followed for Cooling Loads.
 
 Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | Stepwise Regression-Variables, R2| Lasso Regression-Variables, R2|PCA-Variables, R2 | CARTVariables, R2 | RF-R2
 -------|------------------|-----------------|-----------------|-----------------------|------|---------|------------
-Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91| RC, SA, WA, OH, 0.88| GA, OH, RC 0.95 | 0.995
-Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88 | RC, SA, WA, OH, 0.84| GA, RC, WA 0.90 | 0.96
+Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91| All, 0.88| GA, OH, RC 0.95 | 0.995
+Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88 | All, 0.84| GA, RC, WA 0.90 | 0.96
 
 # Conclusion
 
