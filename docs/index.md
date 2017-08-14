@@ -106,7 +106,7 @@ Next, we build the models for heating and cooling loads using cross validation. 
 
 In this case, six folds are being used on the entire dataset to build the models. The code below illustrates the input for the heating load model. The variables of significance obtained from multivariate regression are used to build the crossvalidated model.
 
-In[66]
+In [66]
 
 ```
 Model_HL_CV <- lm( Heating_Load ~ Relative_Compactness+Surface_Area+Wall_Area+Overall_Height+Glazing_Area, data = table)
@@ -278,15 +278,16 @@ F-statistic: 1.14e+03 on 5 and 762 DF,  p-value: <2e-16
 [1,]                     -2.67
 
 ```
-The output above shows the model in terms of the first five principle components. We can choose the varibles based on the p-values. Lastly, the model based on PCA is transformed back to the original factor space, providing an intuitive understanding.
+The output above shows the model in terms of the first five principle components. We can choose the varibles based on the p-values. Lastly, the model based on PCA is transformed back to the original factor space, providing us with an intuitive understanding of the model and the variables.
 
 #### Summary
+
 Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | Stepwise Regression-Variables, R2| Lasso Regression-Variables, R2|PCA-Variables, R2
 -------|------------------|-----------------|-----------------|-----------------------|------
 Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91| RC, SA, WA, OH, 0.88
 Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88 | RC, SA, WA, OH, 0.84
 
-While the R-squared values found via PCA are lower than those found from other methods, the constructed model is considered to be of good quality. 
+While the R-squared values found via PCA are lower than those found from other methods, the constructed model is considered to be of good quality (since R2 > 0.7)
 
 # Classification and Regression Trees
 
@@ -402,7 +403,7 @@ No. of variables tried at each split: 3
 500 Trees generated
 99.4% Variance explained
 
-In [214]
+In [224]
 
 ```
 yhat.rf_HL <- predict(rf.train_HL, newdata = validate)
