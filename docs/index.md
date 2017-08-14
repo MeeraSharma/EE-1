@@ -27,8 +27,8 @@ View(table)
 
 Out[1]: 
 
-Relative Compactness|Surface Area|Wall Area|Roof Area|Overall Height|Orientation|Glazing Area|Glazing Area Distribution
---------------------|------------|---------|---------|--------------|-----------|------------|-------------------------
+Relative Compactness|Surface Area|Wall Area|Roof Area|Overall Height|Orientation|Glazing Area|Glazing Area Distribution| Heating Load|Cooling Load
+--------------------|------------|---------|---------|--------------|-----------|------------|-----------|---------|-------
 0.98|514.5|294|110.25|7|2|0|0|15.55|21.33
 0.98|514.5|294|110.25|7|3|0|0|15.55|21.33
 0.98|514.5|294|110.25|7|4|0|0|15.55|21.33
