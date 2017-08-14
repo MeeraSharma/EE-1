@@ -92,7 +92,7 @@ The same process of model building and refinement is used for the Cooling Load. 
 
 #### Summary
 
-Models | Multivariate Regression-Variables Chosen, R2 
+Models | Multivariate Regression-Variables, R2 
 -------|------------------|
 Heating Load | RC, SA, WA, OH, GA, 0.91
 Cooling Load | RC, SA, WA, OH, GA, 0.89
@@ -118,7 +118,7 @@ The table below summarized the results obtained from cross validation and compar
 
 #### Summary
 
-Models | Multivariate Regression-Variables Chosen, R2 | CV Regression, R2 
+Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 
 -------|------------------|-----------------|
 Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 
 Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 
@@ -146,7 +146,7 @@ HL_step_Rsqaured
 
 #### Summary
 
-Models | Multivariate Regression-Variables Chosen, R2 | CV Regression, R2 | Stepwise Regression, R2
+Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | Stepwise Regression-Variables, R2
 -------|------------------|-----------------|------------------------
 Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92
 Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89
@@ -196,7 +196,8 @@ F-statistic: 1.95e+03 on 4 and 763 DF,  p-value: <2e-16
 Similar approach can be applied for the Cooling Load. The results are summarized below:
 
 #### Summary
-Models | Multivariate Regression-Variables Chosen, R2 | CV Regression, R2 | Stepwise Regression, R2
+
+Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | Stepwise Regression-Variables, R2| Lasso Regression-Variables, R2
 -------|------------------|-----------------|-----------------
 Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91
 Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88
@@ -208,6 +209,85 @@ For Heating Load, the variables considered to be the most important are: Wall Ar
 For Cooling Load, the most important variables are: Relative Compactness, Wall Area, Overall Height, and Glazing Area. All variables had a p-value of less than 0.001.
 
 ## Principal Component Analysis
+
+Principal Component Analysis is a technique used for dealing with high dimensional and correlated data. We start with the complete set of factors and generate variables that, together, explain most of the variation in the data.
+
+In [129]
+
+```
+pca <- prcomp(table[, 1:8], scale. = TRUE)
+summary(pca)
+screeplot(pca, type = "lines", col = "blue")
+var <- pca$sdev^2
+propvar <- var/sum(var)
+plot(propvar, xlab = "Principal Component", ylab = "Proportion of Variance Explained", ylim = c(0,1), type = "b")
+plot(cumsum(propvar), xlab = "Principal Component", ylab = "Cumulative Proportion of Variance Explained", ylim = c(0,1), type = "b")
+```
+
+Out [129]
+
+![PCA](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/PCA.PNG)
+
+We can see here that most of the variation is explained by the first five PCs. Hence, we will build a model using these five variables.
+
+In [137]
+
+```
+# Getting the first 5 principal components
+PCs <- pca$x[,1:5]
+
+# Build linear regression model with the first 5 principal components
+PC_HL <- cbind(PCs, table[,9])
+PC_HL_model <- lm(V6~., data = as.data.frame(PC_HL))
+summary(PC_HL_model)
+Intercept_HL <- PC_HL_model$coefficiencts[1]
+betas_HL <- PC_HL_model$coefficients[2:6]
+betas_HL
+
+alphas_HL <- pca$rotation[,2:6] %*% betas_HL
+t(alphas_HL)
+```
+
+Out [137]
+
+```
+Call:
+lm(formula = V6 ~ ., data = as.data.frame(PC_HL))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-11.154  -2.146  -0.123   1.368  10.345 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  22.3072     0.1253  178.09   <2e-16 ***
+PC1          -4.1696     0.0651  -64.02   <2e-16 ***
+PC2          -3.8052     0.1126  -33.80   <2e-16 ***
+PC3           2.1012     0.1138   18.46   <2e-16 ***
+PC4           0.0261     0.1253    0.21     0.84    
+PC5          -1.6542     0.1413  -11.71   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 3.47 on 762 degrees of freedom
+Multiple R-squared:  0.882,	Adjusted R-squared:  0.882 
+F-statistic: 1.14e+03 on 5 and 762 DF,  p-value: <2e-16
+
+     Relative_Compactness Surface_Area Wall_Area Roof_Area Overall_Height Orientation Glazing_Area
+[1,]               -0.201        0.856      4.21      -1.2         -0.429        -2.1        -2.71
+     Glazing_Area_Distribution
+[1,]                     -2.67
+
+```
+The output above shows the model in terms of the first five principle components. We can choose the varibles based on the p-values. Lastly, the model based on PCA is transformed back to the original factor space, providing an intuitive understanding.
+
+#### Summary
+Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | Stepwise Regression-Variables, R2| Lasso Regression-Variables, R2|PCA-Variables, R2
+-------|------------------|-----------------|-----------------|-----------------------|------
+Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91| RC, SA, WA, OH, 0.88
+Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88 | RC, SA, WA, OH, 0.84
+
+
 # Classification and Regression Trees
 # Random Forests
 
