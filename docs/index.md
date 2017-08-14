@@ -197,10 +197,15 @@ Similar approach can be applied for the Cooling Load. The results are summarized
 
 #### Summary
 Models | Multivariate Regression-Variables Chosen, R2 | CV Regression, R2 | Stepwise Regression, R2
--------|------------------|-----------------|
+-------|------------------|-----------------|-----------------
 Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91
 Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88
 
+We see here that Lasso Regression has chosen different explantory variables to meet the restriction. 
+
+For Heating Load, the variables considered to be the most important are: Wall Area, Overall Height, Glazing Area, and Glazing Area Distribution. Note that the p-value for Glazing Area Distribution is 0.01
+
+For Cooling Load, the most important variables are: Relative Compactness, Wall Area, Overall Height, and Glazing Area. All variables had a p-value of less than 0.001.
 
 ## Principal Component Analysis
 # Classification and Regression Trees
