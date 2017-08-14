@@ -198,7 +198,7 @@ Similar approach can be applied for the Cooling Load. The results are summarized
 #### Summary
 
 Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | Stepwise Regression-Variables, R2| Lasso Regression-Variables, R2
--------|------------------|-----------------|-----------------
+-------|------------------|-----------------|-----------------|----------
 Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91
 Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88
 
@@ -287,8 +287,11 @@ Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | S
 Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91| RC, SA, WA, OH, 0.88
 Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88 | RC, SA, WA, OH, 0.84
 
+While the R-squared values found via PCA are lower than those found from other methods, the constructed model is considered to be of good quality. 
 
 # Classification and Regression Trees
+
+
 # Random Forests
 
 
