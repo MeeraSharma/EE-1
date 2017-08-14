@@ -1,6 +1,6 @@
 # What do the Heating and Cooling Loads of Residential Buildings depend on?
 
-In this analysis, we study the influence of eight predictor variables, namely **Relative Compactness, Surface Area, Wall Area, Roof Area, Overall Height, Orientation, Glazing Area, and Glazing Area Distribution** on Heating and Cooling Loads of 768 diverse residential buildings.
+In this analysis, we study the influence of eight predictor variables, namely **Relative Compactness (RC), Surface Area (SA), Wall Area (WA), Roof Area (RA), Overall Height (OH), Orientation (O), Glazing Area (GA), and Glazing Area Distribution(GAD)** on Heating and Cooling Loads of 768 diverse residential buildings.
 
 Models are trained on 80% of the available data and validated on the remaining 20% to avoid overfitting. 
 The model building approaches considered include:
@@ -93,9 +93,9 @@ The same process of model building and refinement is used for the Cooling Load. 
 #### Summary
 
 Models | Multivariate Regression-Variables Chosen, R2 
--------|------------------|-----------------
-Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.91
-Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89
+-------|------------------|
+Heating Load | RC, SA, WA, OH, GA, 0.91
+Cooling Load | RC, SA, WA, OH, GA, 0.89
 
 Pretty Good!
 
@@ -120,8 +120,8 @@ The table below summarized the results obtained from cross validation and compar
 
 Models | Multivariate Regression-Variables Chosen, R2 | CV Regression, R2 
 -------|------------------|-----------------|
-Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.91 | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.91 
-Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89 | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89 
+Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 
+Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 
 
 The R-squared values obtained are the same as that obtained from multivariate regression. 0.91 and 0.89 are pretty good values and suggest that basic linear regression might be enough to understand the dependencies of Heating and Cooling Loads on the explanatory variables. However, to avoid running the risk of being too optimistic, we will use some state-of-the-art machine learning tools to build a robust model. 
 
@@ -147,9 +147,9 @@ HL_step_Rsqaured
 #### Summary
 
 Models | Multivariate Regression-Variables Chosen, R2 | CV Regression, R2 | Stepwise Regression, R2
--------|------------------|-----------------|
-Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.91 | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.91 |, Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.92
-Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89 | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89 |Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89
+-------|------------------|-----------------|------------------------
+Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92
+Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89
 
 
 Stepwise Regression is a type of **Greedy Algotrithm**. At each step, it does the one thing that looks best without taking future options into consideration. Next, we will look at a more refined method that is based on optimization models and considers all options before making a decision.
@@ -198,8 +198,8 @@ Similar approach can be applied for the Cooling Load. The results are summarized
 #### Summary
 Models | Multivariate Regression-Variables Chosen, R2 | CV Regression, R2 | Stepwise Regression, R2
 -------|------------------|-----------------|
-Heating Load | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.91 | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.91 |, Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.92
-Cooling Load |  Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89 | Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89 |Relative Compactness, Surface Area, Wall Area, Overall Height, Glazing Area, 0.89
+Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91
+Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88
 
 
 ## Principal Component Analysis
