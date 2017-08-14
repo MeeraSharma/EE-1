@@ -5,7 +5,7 @@ In this analysis, we study the influence of eight predictor variables, namely **
 Models are trained on 80% of the available data and validated on the remaining 20% to avoid overfitting. 
 The model building approaches considered include:
 
-* [Basic Linear Regression](basic-linear-regression)
+* [Basic Linear Regression](#basic-linear-regression)
 * [Feature Extraction](feature-extraction)
   * [Stepwise Linear Regression](stepwise-linear-regression)
   * [Principal Component Analysis](principal-component-analysis)
