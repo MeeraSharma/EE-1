@@ -291,7 +291,141 @@ While the R-squared values found via PCA are lower than those found from other m
 
 # Classification and Regression Trees
 
+The CART method is based on recursive partitioning. We begin with growing the tree:
+
+In [164]
+
+```
+install.packages("rpart")
+library(rpart)
+tree.train_HL.2 <- rpart(Heating_Load ~ Relative_Compactness+Surface_Area+Wall_Area+Roof_Area+Overall_Height+Orientation+Glazing_Area+Glazing_Area_Distribution, data = train)  
+summary(tree.train_HL.2)
+plotcp(tree.train_HL.2)
+plot(tree.train_HL.2)
+text(tree.train_HL.2)
+printcp(tree.train_HL.2)
+```
+
+Out [ 164]
+
+```
+Regression tree:
+rpart(formula = Heating_Load ~ Relative_Compactness + Surface_Area + 
+    Wall_Area + Roof_Area + Overall_Height + Orientation + Glazing_Area + 
+    Glazing_Area_Distribution, data = train)
+
+Variables actually used in tree construction:
+[1] Glazing_Area         Overall_Height       Relative_Compactness
+
+Root node error: 60546/615 = 98
+
+n= 615 
+
+    CP nsplit rel error xerror  xstd
+1 0.79      0      1.00   1.00 0.036
+2 0.08      1      0.21   0.21 0.015
+3 0.03      2      0.13   0.13 0.010
+4 0.01      3      0.10   0.10 0.007
+5 0.01      4      0.09   0.09 0.006
+6 0.01      5      0.07   0.08 0.006
+7 0.01      6      0.06   0.07 0.004
+
+```
+
+The top branching variable is Overall Height.
+![Tree](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Tree.png)
+
+Next, we prune the tree based on the variable with the lowest xerror and predict the validate dataset's loads based on the pruned tree. The idea is to prune the tree as the predictive ability of the model starts to decline. 
+
+In [175]
+
+```
+prune.tree.train_HL.2 <- prune(tree.train_HL.2, cp = tree.train_HL.2$cptable[which.min(tree.train_HL.2$cptable[,"xerror"]),"CP"])
+yhat.prune.tree.validate_HL <- predict(prune.tree.train_HL.2, newdata = validate)
+
+plot(validate$Heating_Load, yhat.prune.tree.validate_HL, xlab = "Actual Heating Load", ylab = "Predicted Heating Load")
+abline(0,1)
+
+plot(validate$Heating_Load, scale(yhat.prune.tree.validate_HL - validate$Heating_Load), xlab = "Actual Heating Load", ylab = "Heating Load Error")
+abline(0,0)
+
+```
+
+![CART_HL](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/CART_HL.png)
+
+![CART_HL_Error](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/CART_HL_Error.png)
+
+The same process can be applied to the Cooling Loads.
+
+#### Summary
+
+Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | Stepwise Regression-Variables, R2| Lasso Regression-Variables, R2|PCA-Variables, R2 | CARTVariables, R2
+-------|------------------|-----------------|-----------------|-----------------------|------|---------
+Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91| RC, SA, WA, OH, 0.88| GA, OH, RC 0.95
+Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88 | RC, SA, WA, OH, 0.84| GA, RC, WA 0.90
+
+We can see how the **Classification and Regression Trees** has led to a sharp increase in the R-squared value. 
 
 # Random Forests
+
+We end this discussion with an extension of CART: The Random Forest method. In this method, we introduce randomness to help generate different trees with different strenghts and weaknesses. The idea is that overall, the average of all these trees is better than a single tree with a specific set of strengths and weaknesses. 
+
+Random Forest gives better estimates overall, because while each tree might be over-fitting in one place or another, they don't necessarily over-fit the same way. So the average overall trees tends to flatten out those overreactions to random effects. 
+
+Since the Random Forest method provides an average over the predicted response, we do not end up with a regression model. The importance of each variable is calculated and available for evaluation; however the method does not explain how the variables interact, or how a certain sequence of branches is significant. 
+
+In [215]
+
+```
+install.packages("randomForest")
+library(randomForest)
+set.seed(1)
+
+# Heating Load
+numpred <- 3
+rf.train_HL <- randomForest(Heating_Load~Relative_Compactness+Surface_Area+Wall_Area+Roof_Area+Overall_Height+Orientation+Glazing_Area+Glazing_Area_Distribution, data = train, mtry = numpred, importance = TRUE)
+rf.train_HL
+```
+
+Out [215]
+
+```
+Call:
+ randomForest(formula = Heating_Load ~ Relative_Compactness +      Surface_Area + Wall_Area + Roof_Area + Overall_Height + Orientation +      Glazing_Area + Glazing_Area_Distribution, data = train, mtry = numpred,      importance = TRUE) 
+               Type of random forest: regression
+                     Number of trees: 500
+No. of variables tried at each split: 3
+
+          Mean of squared residuals: 0.562
+                    % Var explained: 99.4
+```
+
+500 Trees generated
+99.4% Variance explained
+
+In [214]
+
+```
+yhat.rf_HL <- predict(rf.train_HL, newdata = validate)
+SSres_rf_HL <- sum((yhat.rf_HL-validate$Heating_Load)^2)
+plot(validate$Heating_Load, yhat.rf_HL, xlab = "Actual Heating Load", ylab = "Predicted Heating Load")
+abline(0,1)
+```
+
+![RF_HL](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/RF_HL.png)
+
+The predicted values found via the Random Forest technique are found to be much closer to the actual values, as opposed to those found via other methods. 
+
+![RF_HL_Error](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/RF_HL_Error.png)
+
+The same process can be followed for Cooling Loads.
+
+#### Summary
+
+Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | Stepwise Regression-Variables, R2| Lasso Regression-Variables, R2|PCA-Variables, R2 | CARTVariables, R2 | RF-R2
+-------|------------------|-----------------|-----------------|-----------------------|------|---------|------------
+Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91| RC, SA, WA, OH, 0.88| GA, OH, RC 0.95 | 0.995
+Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88 | RC, SA, WA, OH, 0.84| GA, RC, WA 0.90 | 0.96
+
 
 
