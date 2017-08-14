@@ -104,3 +104,150 @@ summary(CL_step)
 residuals_CL_step <- validate$Cooling_Load - predict(CL_step, validate)
 CL_step_Rsqaured <- 1-sum(residuals_CL_step^2)/sum((validate$Cooling_Load-mean(validate$Cooling_Load))^2)
 CL_step_Rsqaured
+
+#Lasso and Ridge Regression - Feature Extraction - Peanalized Maximum Likelihood
+
+#Scaling the Data - except response variables
+scaledTable <- as.data.frame(scale(table[,c(1,2,3,4,5,6,7,8)]))
+scaledTable <- cbind(scaledtable, table[,c(9,10)]) # Add response variables back in
+
+install.packages("glmnet")
+library(glmnet)
+
+lasso_HL <- cv.glmnet(x = as.matrix(scaledTable[, c(1,2,3,4,5,6,7,8)]), y = as.vector(scaledTable[ ,9]), alpha=1, nfolds = 10, type.measure = "mse", family = "gaussian")
+coef(lasso_HL)
+mod_lasso_HL <- lm(Heating_Load~Wall_Area+Overall_Height+Glazing_Area+Glazing_Area_Distribution, data = scaledTable)
+summary(mod_lasso_HL)
+
+lasso_CL <- cv.glmnet(x = as.matrix(scaledTable[, c(1,2,3,4,5,6,7,8)]), y = as.vector(scaledTable[ ,10]), alpha=1, nfolds = 10, type.measure = "mse", family = "gaussian")
+coef(lasso_CL)
+mod_lasso_CL <- lm(Cooling_Load~Relative_Compactness+Wall_Area+Overall_Height+Orientation+Glazing_Area, data = scaledTable)
+summary(mod_lasso_CL)
+
+#Principle Component Analysis
+
+pca <- prcomp(table[, 1:8], scale. = TRUE)
+summary(pca)
+screeplot(pca, type = "lines", col = "blue")
+var <- pca$sdev^2
+propvar <- var/sum(var)
+plot(propvar, xlab = "Principal Component", ylab = "Proportion of Variance Explained", ylim = c(0,1), type = "b")
+plot(cumsum(propvar), xlab = "Principal Component", ylab = "Cumulative Proportion of Variance Explained", ylim = c(0,1), type = "b")
+
+# Getting the first 5 principal components
+PCs <- pca$x[,1:5]
+
+# Build linear regression model with the first 5 principal components
+PC_HL <- cbind(PCs, table[,9])
+PC_HL_model <- lm(V6~., data = as.data.frame(PC_HL))
+summary(PC_HL_model)
+Intercept_HL <- PC_HL_model$coefficiencts[1]
+betas_HL <- PC_HL_model$coefficients[2:6]
+betas_HL
+
+alphas_HL <- pca$rotation[,2:6] %*% betas_HL
+t(alphas_HL)
+
+PC_CL <- cbind(PCs, table[,10])
+PC_CL_model <- lm(V6~., data = as.data.frame(PC_CL))
+summary(PC_CL_model)
+Intercept_CL <- PC_CL_model$coefficiencts[1]
+betas_CL <- PC_CL_model$coefficients[2:6]
+betas_CL
+
+alphas_CL <- pca$rotation[,2:6] %*% betas_CL
+t(alphas_CL)
+
+#Classification and Regression Trees
+# does recursive partioning
+
+install.packages("rpart")
+library(rpart)
+tree.train_HL.2 <- rpart(Heating_Load ~ Relative_Compactness+Surface_Area+Wall_Area+Roof_Area+Overall_Height+Orientation+Glazing_Area+Glazing_Area_Distribution, data = train)  
+summary(tree.train_HL.2)
+plotcp(tree.train_HL.2)
+plot(tree.train_HL.2)
+text(tree.train_HL.2)
+printcp(tree.train_HL.2)
+
+#pruning using CP with the minimum error
+
+prune.tree.train_HL.2 <- prune(tree.train_HL.2, cp = tree.train_HL.2$cptable[which.min(tree.train_HL.2$cptable[,"xerror"]),"CP"])
+yhat.prune.tree.validate_HL <- predict(prune.tree.train_HL.2, newdata = validate)
+SSres.prune.tree.validate_HL <- sum((yhat.prune.tree.validate_HL-validate$Heating_Load)^2)
+
+plot(validate$Heating_Load, yhat.prune.tree.validate_HL, xlab = "Actual Heating Load", ylab = "Predicted Heating Load")
+abline(0,1)
+
+plot(validate$Heating_Load, scale(yhat.prune.tree.validate_HL - validate$Heating_Load), xlab = "Actual Heating Load", ylab = "Heating Load Error")
+abline(0,0)
+
+SStot.prune.tree.validate_HL <- sum((validate$Heating_Load - mean(validate$Heating_Load))^2)
+R2.prune.tree.validate_HL <- 1 - SSres.prune.tree.validate_HL/SStot.prune.tree.validate_HL
+R2.prune.tree.validate_HL
+
+#Cooling Load
+
+tree.train_CL.2 <- rpart(Cooling_Load ~ Relative_Compactness+Surface_Area+Wall_Area+Roof_Area+Overall_Height+Orientation+Glazing_Area+Glazing_Area_Distribution, data = train)  
+summary(tree.train_CL.2)
+plotcp(tree.train_CL.2)
+plot(tree.train_CL.2)
+text(tree.train_CL.2)
+printcp(tree.train_CL.2)
+
+#pruning using CP with the minimum error
+
+prune.tree.train_CL.2 <- prune(tree.train_CL.2, cp = tree.train_CL.2$cptable[which.min(tree.train_CL.2$cptable[,"xerror"]),"CP"])
+yhat.prune.tree.validate_CL <- predict(prune.tree.train_CL.2, newdata = validate)
+SSres.prune.tree.validate_CL <- sum((yhat.prune.tree.validate_CL-validate$Cooling_Load)^2)
+
+plot(validate$Cooling_Load, yhat.prune.tree.validate_CL, xlab = "Actual Cooling Load", ylab = "Predicted Cooling Load")
+abline(0,1)
+
+plot(validate$Cooling_Load, scale(yhat.prune.tree.validate_CL - validate$Cooling_Load), xlab = "Actual Cooling Load", ylab = "Cooling Load Error")
+abline(0,0)
+
+SStot.prune.tree.validate_CL <- sum((validate$Cooling_Load - mean(validate$Cooling_Load))^2)
+R2.prune.tree.validate_CL <- 1 - SSres.prune.tree.validate_CL/SStot.prune.tree.validate_CL
+R2.prune.tree.validate_CL
+
+#Random Forests
+install.packages("randomForest")
+library(randomForest)
+set.seed(1)
+
+# Heating Load
+numpred <- 3
+rf.train_HL <- randomForest(Heating_Load~Relative_Compactness+Surface_Area+Wall_Area+Roof_Area+Overall_Height+Orientation+Glazing_Area+Glazing_Area_Distribution, data = train, mtry = numpred, importance = TRUE)
+rf.train_HL
+
+yhat.rf_HL <- predict(rf.train_HL, newdata = validate)
+SSres_rf_HL <- sum((yhat.rf_HL-validate$Heating_Load)^2)
+plot(validate$Heating_Load, yhat.rf_HL, xlab = "Actual Heating Load", ylab = "Predicted Heating Load")
+abline(0,1)
+
+plot(validate$Heating_Load, scale(yhat.rf-validate$Heating_Load), xlab = "Predicted Heating Load", ylab = "Predicted Heating Load Error")
+abline(0,0)
+SStot_rf_HL <- sum((validate$Heating_Load - mean(validate$Heating_Load))^2)
+R2_rf_HL <- 1- SSres_rf_HL/SStot_rf_HL
+R2_rf
+importance(rf.train_HL)
+varImpPlot(rf.train_HL)
+
+# Cooling Load
+numpred <- 3
+rf.train_CL <- randomForest(Cooling_Load~Relative_Compactness+Surface_Area+Wall_Area+Roof_Area+Overall_Height+Orientation+Glazing_Area+Glazing_Area_Distribution, data = train, mtry = numpred, importance = TRUE)
+rf.train_CL
+
+yhat.rf_CL <- predict(rf.train_CL, newdata = validate)
+SSres_rf_CL <- sum((yhat.rf_CL-validate$Cooling_Load)^2)
+plot(validate$Cooling_Load, yhat.rf_CL, xlab = "Actual Cooling Load", ylab = "Predicted Cooling Load")
+abline(0,1)
+
+plot(validate$Cooling_Load, scale(yhat.rf_CL-validate$Heating_Load), xlab = "Predicted Cooling Load", ylab = "Predicted Cooling Load Error")
+abline(0,0)
+SStot_rf_CL <- sum((validate$Cooling_Load - mean(validate$Cooling_Load))^2)
+R2_rf_CL <- 1- SSres_rf_CL/SStot_rf_CL
+R2_rf_CL
+importance(rf.train_CL)
+varImpPlot(rf.train_CL)
