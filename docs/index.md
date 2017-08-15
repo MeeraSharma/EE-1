@@ -3,7 +3,7 @@
 In this analysis, we study the influence of eight predictor variables, namely **Relative Compactness (RC), Surface Area (SA), Wall Area (WA), Roof Area (RA), Overall Height (OH), Orientation (O), Glazing Area (GA), and Glazing Area Distribution(GAD)** on Heating and Cooling Loads of 768 diverse residential buildings.
 
 Models are trained on 80% of the available data and validated on the remaining 20% to avoid overfitting. 
-The model building approaches considered include:
+The data preparation and model building approaches considered include:
 
 * [Basic Linear Regression](#basic-linear-regression)
 * [Data Preparation](#data-preparation)
@@ -48,7 +48,6 @@ Glazing_Area_Distribution, data = train)
 summary(Model1_HL)
 
 ```
-
 Out [16]
 
 ```
@@ -80,17 +79,17 @@ Multiple R-squared:  0.9146,	Adjusted R-squared:  0.9136
 F-statistic: 928.5 on 7 and 607 DF,  p-value: < 2.2e-16
 ```
 
-Based on the output, Relative Compactness, Surface Area, Wall Area, Overall Height, and Glazing Area are used to refine the model. The new model is then validated using the remaining 20% of the data (R-squared = 0.92). The figure below shows how the predicted heating loads (on the validation dataset) compare to the actual heating loads.
+Based on the output, Relative Compactness, Surface Area, Wall Area, Overall Height, and Glazing Area are used to refine the model. The new model is then validated using the remaining 20% of the data. The figure below shows how the predicted heating loads (on the validation dataset) compare to the actual heating loads.
 
 ![HL](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Basic%20Linear%20Regression_HL.PNG)
 
 ### Cooling Load
 
-The same process of model building and refinement is used for the Cooling Load. The variables chosen are: Relative Compactness, Surface Area, Wall Area, Overall Height, and Glazing Area (R-squared = 0.89). The figure below compares the predicted cooling loads with the actual cooling loads of the validation dataset.
+The same process of model building and refinement is used for the Cooling Load. The variables chosen are: Relative Compactness, Surface Area, Wall Area, Overall Height, and Glazing Area. The figure below compares the predicted cooling loads with the actual cooling loads of the validation dataset.
 
 ![CL](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Basic%20Linear%20Regression_CL.PNG)
 
-#### Summary
+#### Model Statistics
 
 Models | Multivariate Regression
 -------|------------------|
@@ -101,7 +100,7 @@ Pretty Good!
 
 ## Crossvalidated Linear Regression
 
-Next, we build the models for heating and cooling loads using cross validation. In the above technique, we manually split the data into training and validation sets. In k-fold cross validation, we divide the entire dataset into k-folds, using k-1 folds for training and the remaining data for validation. Using this technique iteratively over all folds allows us to build a more effective model. Let's see if this leads to a better model quality
+Next, we build the models for heating and cooling loads using cross validation. In the above given technique, we manually split the data into training and validation sets. In k-fold cross validation, we divide the entire dataset into k-folds, using k-1 folds for training and the remaining data for validation. Using this technique iteratively over all folds allows us to build a more effective model. Let's see if this leads to a better model quality
 
 ![CV Image](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/K-fold%20CV.PNG)
 
@@ -116,22 +115,22 @@ CV_HL <- cv.lm(table, Model_HL_CV, m=6,plotit = FALSE)
 ```
 The table below summarized the results obtained from cross validation and compares them against those from the multivariate linear regression. 
 
-#### Summary
+#### Model Statistics
 
 Models | Multivariate Regression| CV Regression
 -------|------------------|-----------------|
 Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96 
 Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21 
 
-The R-squared values obtained are the same as that obtained from multivariate regression. 0.91 and 0.89 are pretty good values and suggest that basic linear regression might be enough to understand the dependencies of Heating and Cooling Loads on the explanatory variables. However, to avoid running the risk of being too optimistic, we will use some state-of-the-art machine learning tools to build a robust model. 
+The R-squared values obtained from the two techniques are pretty close to each other for both Heating as well as Cooling Loads. The Root Mean Squared Error for Heating Loads is found to be lower for CV Regression and is only slighttly higher for Cooling Loads, suggesting that Crossvalidated Regression is better than Basic Multivariate Regression. 
 
 # Data Preparation
 
+In situations where a large number of variables are present in a dataset and high collinearity is evident, we might benefit from a technique called Principal Component Analysis. 
+
 ## Principal Component Analysis
 
-Principal Component Analysis is a technique used for dealing with high dimensional and correlated data. We start with the complete set of factors and generate Principal Components that explain most of the variation in the data. 
-
-This technique is especially useful in datasets that have a high degree of collinearity amongst the explanatory variables. 
+Principal Component Analysis is a technique used for dealing with high dimensional and correlated data. We start with the complete set of factors and generate Principal Components that explain most of the variation in the data, thereby reducing the dimensions of the variable space and retaining features that account for most of the variance in the dataset.
 
 In [97]
 
@@ -170,7 +169,6 @@ pcr.fit_HL$scores
 coef(pcr.fit_HL)
 
 ```
-
 Out [105]
 
 ```
@@ -197,20 +195,22 @@ Glazing_Area                2.58315034
 Glazing_Area_Distribution   0.38439689
 
 ```
-The output above shows the percent variation explained by the first five principle components. We can see that together these explain 99.3% of variance in the training dataset.Lastly, the model based on PCA is transformed back to the original factor space to obtain the coefficients of the explanatory variables. 
+The output above shows the percent variation explained by the first five principle components. We can see that together these explain 99.3% of variance in the training dataset. Lastly, the model based on PCA is transformed back to the original factor space to obtain the coefficients of the explanatory variables. 
 
-#### Summary
+#### Model Statistics
 
 Models | Multivariate Regression | CV Regression | PCA
 -------|------------------|-----------------|-----------------|-----------------------
 Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96  | All, R2: 0.88, RMSE: 3.75  
 Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21  | All, R2: 0.83, RMSE: 4.01 
 
-While the R-squared values found via PCA are lower than those found from other methods, the constructed model is considered to be of good quality (since R2 > 0.7)
+The model obtained as a result of Principal Component Analysis leads lower R-sqaured and higher RMSE values for the validation dataset. Therefore, while PCA is a useful technique for high dimensional data, we are probably better off without it.
 
 # Feature Extraction
 
-In cases where the number of variables is too large, it might not be possible to refine the models based on the p-values manually. In such scenarios, we might want to employ techniques that will allow us to *extract pertinent features* without manual intervention. The goal of feature extraction techniques is to identify variables that are most important in building a model. Using fewer variables leads to simpler models that not only are easier to understand, but also require less data collection. Secondly, when the number of variables gets too close to the number of data points, there is a risk of overfitting. 
+Now that we have settled on using our dataset as is, let us consider a few methods that can help build a focused model. We saw previously that we can select important variables in a model based on their associate p-values. While this technique worked for us (given the small number of variables), how can we tackle large number of variables? Feature Extraction!
+
+The goal of feature extraction techniques is to identify and *extract pertinent variables* that are most important in building a model, without manual intervention. Moreover, using fewer variables leads to simpler models that not only are easier to understand, but also require less data collection. 
   
 ## Stepwise Linear Regression
 
@@ -237,6 +237,9 @@ Models | Multivariate Regression | CV Regression | PCA | Stepwise Regression
 Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96 | All, R2: 0.88, RMSE: 3.75 | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.03
 Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21 | All, R2: 0.83, RMSE: 4.01 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20
 
+For Heating Loads, the R-sqaured value obtained from Stepwise is slightly higher than that obtained from CV Regression,indicating a better fit. The RMSE value associated with Stepwise Regression, however, is seen to be higher than that of CV Regression. For Cooling Loads, the two sets of values are almost te same. 
+
+Both, Stepwise and Crossvalidate Regression, seem to be good modeling techniques for this dataset.
 
 Stepwise Regression is a type of **Greedy Algotrithm**. At each step, it does the one thing that looks best without taking future options into consideration. Next, we will look at a more refined method that is based on optimization models and considers all options before making a decision.
 
