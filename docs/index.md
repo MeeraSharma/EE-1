@@ -230,7 +230,7 @@ RMSE_HL_step
 
 ```
 
-#### Summary
+#### Model Statistics
 
 Models | Multivariate Regression | CV Regression | PCA | Stepwise Regression
 -------|------------------|-----------------|------------------------
@@ -245,9 +245,9 @@ Stepwise Regression is a type of **Greedy Algotrithm**. At each step, it does th
 
 ## Lasso Regression
 
-![Lasso](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Lasso%20Regression.PNG)
+Lasso Regression is one of the more advanced techniques of feature extraction. First, the model is layered on an optimization algorithm so that residual errors are ensured to be minimal overall. Secondly, constraints added within the Lasso Regression lead to only the most important variables being used in model construction. 
 
-Optimization leads the model to choose coefficiencts of the regression equation such that the residual errors are minimal. Lasso Regression adds a constraint to the model such that the sum of the coefficients isn't too large. The restriction ensures that only the most important variables are chosen to build the model. 
+![Lasso](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Lasso%20Regression.PNG)
 
 Since we are constraining the sum of coefficients, we first need to scale the data.
 
@@ -263,7 +263,6 @@ coef(lasso_HL)
 mod_lasso_HL <- lm(Heating_Load~Wall_Area+Overall_Height+Glazing_Area+Glazing_Area_Distribution, data = scaledTable)
 summary(mod_lasso_HL)
 ```
-
 Out [173]
 
 ```
@@ -284,24 +283,24 @@ F-statistic: 1.95e+03 on 4 and 763 DF,  p-value: <2e-16
 
 Similar approach can be applied for the Cooling Load. The results are summarized below:
 
-#### Summary
+#### Model Statistics
 
 Models | Multivariate Regression | CV Regression| Stepwise Regression| Lasso Regression
 -------|------------------|-----------------|-----------------|----------
 Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96 | All, R2: 0.88, RMSE: 3.75 | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.03 | WA, OH, GA, GAD, R2: 0.91, RMSE: 3.47
 Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21 | All, R2: 0.83, RMSE: 4.01 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | WA, OH, GA, R2: 0.88, RMSE: 3.54
 
-We see here that Lasso Regression has chosen different explantory variables to meet the restriction. 
+Note here that number of variables chosen by Lasso is lower than those by other methods for both the Heating as well as the Cooling Loads. 
 
-For Heating Load, the variables considered to be the most important are: Wall Area, Overall Height, Glazing Area, and Glazing Area Distribution. Note that the p-value for Glazing Area Distribution is 0.01
+Since a fewer number of variables are chosen in the model, the RMSE values are seen to increase for Lasso Regression. This, however, is not necessarily a bad thing. If the risk associated with a slightly increased RMSE value is acceptable, it might be better to use the simpler model such as that chosen by Lasso Regression. 
 
-For Cooling Load, the most important variables are: Relative Compactness, Wall Area, Overall Height, and Glazing Area. All variables had a p-value of less than 0.001.
+Next, we explore a few advanced machine learning methods for model building and prediction. 
 
 # Classification and Regression Trees
 
-The CART method is based on recursive partitioning. We begin with growing the tree:
+In all the methods discussed uptil now we used a single regression model on the entire training dataset. However, there might be scenarios when we can divide the dataset based on the explantory variables and build models specific to each subset. The CART method does just this - classifying the dataset into 'branches' and fitting regression model to each 'leaf' of the branches.It is based on recursive partitioning. We begin by growing the tree:
 
-In [204
+In [204]
 
 ```
 install.packages("rpart")
@@ -365,14 +364,14 @@ abline(0,0)
 
 The same process can be applied to the Cooling Loads.
 
-#### Summary
+#### Model Statistics
 
 Models | Multivariate Regression | CV Regression| Stepwise Regression| Lasso Regression| CART
 -------|------------------|-----------------|-----------------|-----------------------|------|---------
 Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96 | All, R2: 0.88, RMSE: 3.75 | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.03 | WA, OH, GA, GAD, R2: 0.91, RMSE: 3.47 | R2: 0.95, RMSE: 2.33
 Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21 | All, R2: 0.83, RMSE: 4.01 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | WA, OH, GA, R2: 0.88, RMSE: 3.54 | R2: 0.90, RMSE: 2.96
 
-We can see how the **Classification and Regression Trees** has led to a sharp increase in the R-squared value. 
+We can see how the **Classification and Regression Trees** has led to a sharp increase in the R-squared values and a decline in the RMSE values. This is because each regression model built within the tree is specific to a certain dataset. 
 
 # Random Forests
 
@@ -428,17 +427,24 @@ The predicted values found via the Random Forest technique are found to be much 
 
 The same process can be followed for Cooling Loads.
 
-#### Summary
+#### Model Statistics
 
 Models | Multivariate Regression | CV Regression| Stepwise Regression| Lasso Regression| CART | RF
 -------|------------------|-----------------|-----------------|-----------------------|------|---------|------------
 Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96 | All, R2: 0.88, RMSE: 3.75 | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.03 | WA, OH, GA, GAD, R2: 0.91, RMSE: 3.47 | R2: 0.95, RMSE: 2.33 | R2: 0.995, RMSE: 3.75
 Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21 | All, R2: 0.83, RMSE: 4.01 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | WA, OH, GA, R2: 0.88, RMSE: 3.54 | R2: 0.90, RMSE: 2.96 | R2: 0.96, RMSE: 4.01
 
+The Random Forest method leads to an even higher R-sqaured value! The RMSE values, however, are seen to increase as well and this is due to the randomness generated. 
+
+Random Forest is a good quick solution and offers enhanced predictive capabilities. The downside, however, is that no single regression equation is obtained to communicate the model's workings with an audience. 
+
 # Conclusion
 
-This post evaluates various methods to model and predict Heating and Cooling Loads of various residential buildings. The analysis shows that while a basic multivariate regression might be sufficient to build a model, advanced feature extraction techniques and classification and regression techniques are also feasible, and in some cases even better.
+Basic Multivariate Regression, Crossvalidated Regression, Stepwise Regression, and CART are well suited for this dataset given the simplicity of the models and prediction accuracy. 
 
+Lasso Regression provides reasonable model quality and predictions, however it is not compare well against other simpler modeling techniques due to the restricted variable space.
+
+Random Forest provides the best predictive capabilties. It is, however, not suited for this dataset due to its scale and simplicity.
 
 ###### References
 1. Data: http://archive.ics.uci.edu/ml/datasets/Energy+efficiency
