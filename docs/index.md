@@ -93,8 +93,8 @@ The same process of model building and refinement is used for the Cooling Load. 
 
 Models | Multivariate Regression
 -------|------------------|
-Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01
-Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20
+Heating Load | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.01
+Cooling Load | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20
 
 Pretty Good!
 
@@ -119,8 +119,8 @@ The table below summarized the results obtained from cross validation and compar
 
 Models | Multivariate Regression| CV Regression
 -------|------------------|-----------------|
-Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96 
-Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21 
+Heating Load | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.01 | RC, SA, WA, OH, GA; R2: 0.91; RMSE: 2.96 
+Cooling Load | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.21 
 
 The R-squared values obtained from the two techniques are pretty close to each other for both Heating as well as Cooling Loads. The Root Mean Squared Error for Heating Loads is found to be lower for CV Regression and is only slighttly higher for Cooling Loads, suggesting that Crossvalidated Regression is better than Basic Multivariate Regression. 
 
@@ -144,7 +144,7 @@ plot(propvar, xlab = "Principal Component", ylab = "Proportion of Variance Expla
 plot(cumsum(propvar), xlab = "Principal Component", ylab = "Cumulative Proportion of Variance Explained", ylim = c(0,1), type = "b")
 ```
 
-Out [97
+Out [97]
 
 ![PCA](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/PCA.PNG)
 
@@ -201,8 +201,8 @@ The output above shows the percent variation explained by the first five princip
 
 Models | Multivariate Regression | CV Regression | PCA
 -------|------------------|-----------------|-----------------|-----------------------
-Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96  | All, R2: 0.88, RMSE: 3.75  
-Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21  | All, R2: 0.83, RMSE: 4.01 
+Heating Load | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.01 | RC, SA, WA, OH, GA; R2: 0.91; RMSE: 2.96  | All; R2: 0.88; RMSE: 3.75  
+Cooling Load | RC, SA, WA, OH, GA;R2: 0.89; RMSE: 3.20 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.21  | All; R2: 0.83; RMSE: 4.01 
 
 The model obtained as a result of Principal Component Analysis leads lower R-sqaured and higher RMSE values for the validation dataset. Therefore, while PCA is a useful technique for high dimensional data, we are probably better off without it.
 
@@ -234,8 +234,8 @@ RMSE_HL_step
 
 Models | Multivariate Regression | CV Regression | PCA | Stepwise Regression
 -------|------------------|-----------------|------------------------
-Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96 | All, R2: 0.88, RMSE: 3.75 | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.03
-Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21 | All, R2: 0.83, RMSE: 4.01 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20
+Heating Load | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.01 | RC, SA, WA, OH, GA; R2: 0.91; RMSE: 2.96 | All; R2: 0.88; RMSE: 3.75 | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.03
+Cooling Load | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.21 | All; R2: 0.83; RMSE: 4.01 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20
 
 For Heating Loads, the R-sqaured value obtained from Stepwise is slightly higher than that obtained from CV Regression,indicating a better fit. The RMSE value associated with Stepwise Regression, however, is seen to be higher than that of CV Regression. For Cooling Loads, the two sets of values are almost te same. 
 
@@ -287,8 +287,8 @@ Similar approach can be applied for the Cooling Load. The results are summarized
 
 Models | Multivariate Regression | CV Regression| Stepwise Regression| Lasso Regression
 -------|------------------|-----------------|-----------------|----------
-Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96 | All, R2: 0.88, RMSE: 3.75 | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.03 | WA, OH, GA, GAD, R2: 0.91, RMSE: 3.47
-Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21 | All, R2: 0.83, RMSE: 4.01 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | WA, OH, GA, R2: 0.88, RMSE: 3.54
+Heating Load | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.01 | RC, SA, WA, OH, GA; R2: 0.91; RMSE: 2.96 | All; R2: 0.88; RMSE: 3.75 | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.03 | WA, OH, GA, GAD; R2: 0.91; RMSE: 3.47
+Cooling Load | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.21 | All; R2: 0.83; RMSE: 4.01 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20 | WA, OH, GA; R2: 0.88; RMSE: 3.54
 
 Note here that number of variables chosen by Lasso is lower than those by other methods for both the Heating as well as the Cooling Loads. 
 
@@ -368,8 +368,8 @@ The same process can be applied to the Cooling Loads.
 
 Models | Multivariate Regression | CV Regression| Stepwise Regression| Lasso Regression| CART
 -------|------------------|-----------------|-----------------|-----------------------|------|---------
-Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96 | All, R2: 0.88, RMSE: 3.75 | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.03 | WA, OH, GA, GAD, R2: 0.91, RMSE: 3.47 | R2: 0.95, RMSE: 2.33
-Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21 | All, R2: 0.83, RMSE: 4.01 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | WA, OH, GA, R2: 0.88, RMSE: 3.54 | R2: 0.90, RMSE: 2.96
+Heating Load | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.01 | RC, SA, WA, OH, GA; R2: 0.91; RMSE: 2.96 | All; R2: 0.88; RMSE: 3.75 | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.03 | WA, OH, GA, GAD; R2: 0.91; RMSE: 3.47 | R2: 0.95; RMSE: 2.33
+Cooling Load | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.21 | All; R2: 0.83; RMSE: 4.01 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20 | WA, OH, GA; R2: 0.88; RMSE: 3.54 | R2: 0.90; RMSE: 2.96
 
 We can see how the **Classification and Regression Trees** has led to a sharp increase in the R-squared values and a decline in the RMSE values. This is because each regression model built within the tree is specific to a certain dataset. 
 
@@ -431,8 +431,8 @@ The same process can be followed for Cooling Loads.
 
 Models | Multivariate Regression | CV Regression| Stepwise Regression| Lasso Regression| CART | RF
 -------|------------------|-----------------|-----------------|-----------------------|------|---------|------------
-Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96 | All, R2: 0.88, RMSE: 3.75 | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.03 | WA, OH, GA, GAD, R2: 0.91, RMSE: 3.47 | R2: 0.95, RMSE: 2.33 | R2: 0.995, RMSE: 3.75
-Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21 | All, R2: 0.83, RMSE: 4.01 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | WA, OH, GA, R2: 0.88, RMSE: 3.54 | R2: 0.90, RMSE: 2.96 | R2: 0.96, RMSE: 4.01
+Heating Load | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.01 | RC, SA, WA, OH, GA; R2: 0.91; RMSE: 2.96 | All; R2: 0.88; RMSE: 3.75 | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.03 | WA, OH, GA, GAD; R2: 0.91; RMSE: 3.47 | R2: 0.95; RMSE: 2.33 | R2: 0.995; RMSE: 3.75
+Cooling Load | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.21 | All; R2: 0.83; RMSE: 4.01 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20 | WA, OH, GA; R2: 0.88; RMSE: 3.54 | R2: 0.90; RMSE: 2.96 | R2: 0.96; RMSE: 4.01
 
 The Random Forest method leads to an even higher R-sqaured value! The RMSE values, however, are seen to increase as well and this is due to the randomness generated. 
 
