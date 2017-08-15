@@ -92,57 +92,6 @@ reg_CL_CV <- lm(y_CL ~ x_CL, data = validate)
 plot(validate$Cooling_Load, predict(Model_CL_CV, validate), xlab = "Actual Cooling Load", ylab = "Predicted Cooling Load", type = "p")
 abline(reg_CL_CV, col = "blue")
 
-#Feature Extraction
-
-#Step-wise
-HL_step <- step(Model1_HL, direction = "both")
-summary(HL_step)
-residuals_HL_step <- validate$Heating_Load - predict(HL_step, validate)
-HL_step_Rsqaured <- 1-sum(residuals_HL_step^2)/sum((validate$Heating_Load-mean(validate$Heating_Load))^2)
-HL_step_Rsqaured
-MSE_HL_step <- (sum((residuals_HL_step)^2))/nrow(validate)
-RMSE_HL_step <- sqrt(MSE_HL_step)
-RMSE_HL_step
-  
-CL_step <- step(Model1_CL, direction = "both")
-summary(CL_step)
-residuals_CL_step <- validate$Cooling_Load - predict(CL_step, validate)
-CL_step_Rsqaured <- 1-sum(residuals_CL_step^2)/sum((validate$Cooling_Load-mean(validate$Cooling_Load))^2)
-CL_step_Rsqaured
-MSE_CL_step <- (sum((residuals_CL_step)^2))/nrow(validate)
-RMSE_CL_step <- sqrt(MSE_CL_step)
-RMSE_CL_step
-
-#Lasso Regression - Feature Extraction - Peanalized Maximum Likelihood
-
-#Scaling the Data - except response variables
-scaledTrain <- as.data.frame(scale(train[,c(1,2,3,4,5,6,7,8)]))
-scaledTrain <- cbind(scaledTrain, train[,c(9,10)]) # Add response variables back in
-
-scaledValidate <- as.data.frame(scale(validate[,c(1,2,3,4,5,6,7,8)]))
-scaledValidate <- cbind(scaledValidate, validate[,c(9,10)]) # Add response variables back in
-
-install.packages("glmnet")
-library(glmnet)
-
-lasso_HL <- cv.glmnet(x = as.matrix(scaledTrain[, c(1,2,3,4,5,6,7,8)]), y = as.vector(scaledTrain[ ,9]), alpha=1, nfolds = 10, type.measure = "mse", family = "gaussian")
-coef(lasso_HL)
-mod_lasso_HL <- lm(Heating_Load~Wall_Area+Overall_Height+Glazing_Area+Glazing_Area_Distribution, data = scaledTrain)
-summary(mod_lasso_HL)
-residuals_mod_lasso_HL <- scaledValidate$Heating_Load - predict(mod_lasso_HL, scaledValidate)
-MSE_lasso_HL <- (sum(residuals_mod_lasso_HL^2)/nrow(scaledValidate))
-RMSE_lasso_HL <- sqrt(MSE_lasso_HL)
-RMSE_lasso_HL
-
-lasso_CL <- cv.glmnet(x = as.matrix(scaledTable[, c(1,2,3,4,5,6,7,8)]), y = as.vector(scaledTrain[ ,10]), alpha=1, nfolds = 10, type.measure = "mse", family = "gaussian")
-coef(lasso_CL)
-mod_lasso_CL <- lm(Cooling_Load~Wall_Area+Overall_Height+Glazing_Area, data = scaledTrain)
-summary(mod_lasso_CL)
-residuals_mod_lasso_CL <- scaledValidate$Cooling_Load - predict(mod_lasso_CL, scaledValidate)
-MSE_lasso_CL <- (sum(residuals_mod_lasso_CL^2)/nrow(scaledValidate))
-RMSE_lasso_CL <- sqrt(MSE_lasso_CL)
-RMSE_lasso_CL
-
 #Principle Component Analysis
 
 pca <- prcomp(train[, 1:8], scale. = TRUE)
@@ -195,6 +144,59 @@ R2.pred_CL
 
 RMSE_pred_CL <- sqrt(SSres.pred_CL/nrow(validate))
 RMSE_pred_CL
+
+
+#Feature Extraction
+
+#Step-wise
+HL_step <- step(Model1_HL, direction = "both")
+summary(HL_step)
+residuals_HL_step <- validate$Heating_Load - predict(HL_step, validate)
+HL_step_Rsqaured <- 1-sum(residuals_HL_step^2)/sum((validate$Heating_Load-mean(validate$Heating_Load))^2)
+HL_step_Rsqaured
+MSE_HL_step <- (sum((residuals_HL_step)^2))/nrow(validate)
+RMSE_HL_step <- sqrt(MSE_HL_step)
+RMSE_HL_step
+  
+CL_step <- step(Model1_CL, direction = "both")
+summary(CL_step)
+residuals_CL_step <- validate$Cooling_Load - predict(CL_step, validate)
+CL_step_Rsqaured <- 1-sum(residuals_CL_step^2)/sum((validate$Cooling_Load-mean(validate$Cooling_Load))^2)
+CL_step_Rsqaured
+MSE_CL_step <- (sum((residuals_CL_step)^2))/nrow(validate)
+RMSE_CL_step <- sqrt(MSE_CL_step)
+RMSE_CL_step
+
+#Lasso Regression - Feature Extraction - Peanalized Maximum Likelihood
+
+#Scaling the Data - except response variables
+scaledTrain <- as.data.frame(scale(train[,c(1,2,3,4,5,6,7,8)]))
+scaledTrain <- cbind(scaledTrain, train[,c(9,10)]) # Add response variables back in
+
+scaledValidate <- as.data.frame(scale(validate[,c(1,2,3,4,5,6,7,8)]))
+scaledValidate <- cbind(scaledValidate, validate[,c(9,10)]) # Add response variables back in
+
+install.packages("glmnet")
+library(glmnet)
+
+lasso_HL <- cv.glmnet(x = as.matrix(scaledTrain[, c(1,2,3,4,5,6,7,8)]), y = as.vector(scaledTrain[ ,9]), alpha=1, nfolds = 10, type.measure = "mse", family = "gaussian")
+coef(lasso_HL)
+mod_lasso_HL <- lm(Heating_Load~Wall_Area+Overall_Height+Glazing_Area+Glazing_Area_Distribution, data = scaledTrain)
+summary(mod_lasso_HL)
+residuals_mod_lasso_HL <- scaledValidate$Heating_Load - predict(mod_lasso_HL, scaledValidate)
+MSE_lasso_HL <- (sum(residuals_mod_lasso_HL^2)/nrow(scaledValidate))
+RMSE_lasso_HL <- sqrt(MSE_lasso_HL)
+RMSE_lasso_HL
+
+lasso_CL <- cv.glmnet(x = as.matrix(scaledTable[, c(1,2,3,4,5,6,7,8)]), y = as.vector(scaledTrain[ ,10]), alpha=1, nfolds = 10, type.measure = "mse", family = "gaussian")
+coef(lasso_CL)
+mod_lasso_CL <- lm(Cooling_Load~Wall_Area+Overall_Height+Glazing_Area, data = scaledTrain)
+summary(mod_lasso_CL)
+residuals_mod_lasso_CL <- scaledValidate$Cooling_Load - predict(mod_lasso_CL, scaledValidate)
+MSE_lasso_CL <- (sum(residuals_mod_lasso_CL^2)/nrow(scaledValidate))
+RMSE_lasso_CL <- sqrt(MSE_lasso_CL)
+RMSE_lasso_CL
+
 
 #Classification and Regression Trees
 # does recursive partioning
