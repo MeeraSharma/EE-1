@@ -129,9 +129,11 @@ The R-squared values obtained are the same as that obtained from multivariate re
 
 ## Principal Component Analysis
 
-Principal Component Analysis is a technique used for dealing with high dimensional and correlated data. We start with the complete set of factors and generate variables that, together, explain most of the variation in the data.
+Principal Component Analysis is a technique used for dealing with high dimensional and correlated data. We start with the complete set of factors and generate Principal Components that explain most of the variation in the data. 
 
-In [129]
+This technique is especially useful in datasets that have a high degree of collinearity amongst the explanatory variables. 
+
+In [97]
 
 ```
 pca <- prcomp(table[, 1:8], scale. = TRUE)
@@ -143,62 +145,59 @@ plot(propvar, xlab = "Principal Component", ylab = "Proportion of Variance Expla
 plot(cumsum(propvar), xlab = "Principal Component", ylab = "Cumulative Proportion of Variance Explained", ylim = c(0,1), type = "b")
 ```
 
-Out [129]
+Out [97
 
 ![PCA](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/PCA.PNG)
 
 We can see here that most of the variation is explained by the first five PCs. Hence, we will build a model using these five variables.
 
-In [137]
+In [105]
 
 ```
 # Getting the first 5 principal components
 PCs <- pca$x[,1:5]
 
-# Build linear regression model with the first 5 principal components
-PC_HL <- cbind(PCs, table[,9])
-PC_HL_model <- lm(V6~., data = as.data.frame(PC_HL))
-summary(PC_HL_model)
-Intercept_HL <- PC_HL_model$coefficiencts[1]
-betas_HL <- PC_HL_model$coefficients[2:6]
-betas_HL
+install.packages("pls")
+library(pls)
 
-alphas_HL <- pca$rotation[,2:6] %*% betas_HL
-t(alphas_HL)
+# Run principal component regression function with only the first 5 principal components
+
+numcomp <- 5
+pcr.fit_HL <- pcr(Heating_Load ~ Relative_Compactness+Surface_Area+Wall_Area+Roof_Area+Overall_Height+Orientation+Glazing_Area+Glazing_Area_Distribution, data = train, scale = TRUE, ncomp = numcomp)
+summary(pcr.fit_HL)
+
+pcr.fit_HL$scores
+coef(pcr.fit_HL)
+
 ```
 
-Out [137]
+Out [105]
 
 ```
 Call:
-lm(formula = V6 ~ ., data = as.data.frame(PC_HL))
+Data: 	X dimension: 615 8 
+	Y dimension: 615 1
+Fit method: svdpc
+Number of components considered: 5
+TRAINING: % variance explained
+              1 comps  2 comps  3 comps  4 comps  5 comps
+X               46.28    62.08    77.39    89.85    99.30
+Heating_Load    62.55    71.71    85.66    87.14    88.34
 
-Residuals:
-    Min      1Q  Median      3Q     Max 
--11.154  -2.146  -0.123   1.368  10.345 
+, , 5 comps
 
-Coefficients:
-            Estimate Std. Error t value Pr(>|t|)    
-(Intercept)  22.3072     0.1253  178.09   <2e-16 ***
-PC1          -4.1696     0.0651  -64.02   <2e-16 ***
-PC2          -3.8052     0.1126  -33.80   <2e-16 ***
-PC3           2.1012     0.1138   18.46   <2e-16 ***
-PC4           0.0261     0.1253    0.21     0.84    
-PC5          -1.6542     0.1413  -11.71   <2e-16 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 3.47 on 762 degrees of freedom
-Multiple R-squared:  0.882,	Adjusted R-squared:  0.882 
-F-statistic: 1.14e+03 on 5 and 762 DF,  p-value: <2e-16
-
-     Relative_Compactness Surface_Area Wall_Area Roof_Area Overall_Height Orientation Glazing_Area
-[1,]               -0.201        0.856      4.21      -1.2         -0.429        -2.1        -2.71
-     Glazing_Area_Distribution
-[1,]                     -2.67
+                          Heating_Load
+Relative_Compactness        1.12012240
+Surface_Area               -1.18970905
+Wall_Area                   3.51099826
+Roof_Area                  -2.86431696
+Overall_Height              2.83596968
+Orientation                -0.01130921
+Glazing_Area                2.58315034
+Glazing_Area_Distribution   0.38439689
 
 ```
-The output above shows the model in terms of the first five principle components. We can choose the varibles based on the p-values. Lastly, the model based on PCA is transformed back to the original factor space, providing us with an intuitive understanding of the model and the variables.
+The output above shows the percent variation explained by the first five principle components. We can see that together these explain 99.3% of variance in the training dataset.Lastly, the model based on PCA is transformed back to the original factor space to obtain the coefficients of the explanatory variables. 
 
 #### Summary
 
@@ -218,13 +217,16 @@ In cases where the number of variables is too large, it might not be possible to
 Stepwise Linear Regression is a combination of forward selection and backward elimination approaches. At each step in the procedure, the model is evaluated and any variable that no longer seems necessary is removed. The code below illustrates the model built for heating loads.
 
 ```
-In [96]
+In [152]
 
 HL_step <- step(Model1_HL, direction = "both")
 summary(HL_step)
 residuals_HL_step <- validate$Heating_Load - predict(HL_step, validate)
 HL_step_Rsqaured <- 1-sum(residuals_HL_step^2)/sum((validate$Heating_Load-mean(validate$Heating_Load))^2)
 HL_step_Rsqaured
+MSE_HL_step <- (sum((residuals_HL_step)^2))/nrow(validate)
+RMSE_HL_step <- sqrt(MSE_HL_step)
+RMSE_HL_step
 
 ```
 
@@ -246,7 +248,7 @@ Optimization leads the model to choose coefficiencts of the regression equation 
 
 Since we are constraining the sum of coefficients, we first need to scale the data.
 
-In [111]
+In [173]
 
 ```
 scaledTable <- as.data.frame(scale(table[,c(1,2,3,4,5,6,7,8)]))
@@ -259,7 +261,7 @@ mod_lasso_HL <- lm(Heating_Load~Wall_Area+Overall_Height+Glazing_Area+Glazing_Ar
 summary(mod_lasso_HL)
 ```
 
-Out [111]
+Out [173]
 
 ```
 Coefficients:
@@ -296,7 +298,7 @@ For Cooling Load, the most important variables are: Relative Compactness, Wall A
 
 The CART method is based on recursive partitioning. We begin with growing the tree:
 
-In [164]
+In [204
 
 ```
 install.packages("rpart")
@@ -309,7 +311,7 @@ text(tree.train_HL.2)
 printcp(tree.train_HL.2)
 ```
 
-Out [ 164]
+Out [204]
 
 ```
 Regression tree:
@@ -340,7 +342,7 @@ The top branching variable is Overall Height.
 
 Next, we prune the tree based on the variable with the lowest xerror and predict the validate dataset's loads based on the pruned tree. The idea is to prune the tree as the predictive ability of the model starts to decline. 
 
-In [175]
+In [215]
 
 ```
 prune.tree.train_HL.2 <- prune(tree.train_HL.2, cp = tree.train_HL.2$cptable[which.min(tree.train_HL.2$cptable[,"xerror"]),"CP"])
@@ -377,7 +379,7 @@ Random Forest gives better estimates overall, because while each tree might be o
 
 Since the Random Forest method provides an average over the predicted response, we do not end up with a regression model. The importance of each variable is calculated and available for evaluation; however the method does not explain how the variables interact, or how a certain sequence of branches is significant. 
 
-In [215]
+In [259]
 
 ```
 install.packages("randomForest")
@@ -390,7 +392,7 @@ rf.train_HL <- randomForest(Heating_Load~Relative_Compactness+Surface_Area+Wall_
 rf.train_HL
 ```
 
-Out [215]
+Out [259]
 
 ```
 Call:
@@ -406,7 +408,7 @@ No. of variables tried at each split: 3
 500 Trees generated
 99.4% Variance explained
 
-In [224]
+In [268]
 
 ```
 yhat.rf_HL <- predict(rf.train_HL, newdata = validate)
