@@ -91,10 +91,10 @@ The same process of model building and refinement is used for the Cooling Load. 
 
 #### Summary
 
-Models | Multivariate Regression-Variables, R2 
+Models | Multivariate Regression
 -------|------------------|
-Heating Load | RC, SA, WA, OH, GA, 0.91
-Cooling Load | RC, SA, WA, OH, GA, 0.89
+Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01
+Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20
 
 Pretty Good!
 
@@ -117,95 +117,14 @@ The table below summarized the results obtained from cross validation and compar
 
 #### Summary
 
-Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 
+Models | Multivariate Regression| CV Regression
 -------|------------------|-----------------|
-Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 
-Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 
+Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96 
+Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21 
 
 The R-squared values obtained are the same as that obtained from multivariate regression. 0.91 and 0.89 are pretty good values and suggest that basic linear regression might be enough to understand the dependencies of Heating and Cooling Loads on the explanatory variables. However, to avoid running the risk of being too optimistic, we will use some state-of-the-art machine learning tools to build a robust model. 
 
-# Feature Extraction
-
-In cases where the number of variables is too large, it might not be possible to refine the models based on the p-values manually. In such scenarios, we might want to employ techniques that will allow us to *extract pertinent features* without manual intervention. The goal of feature extraction techniques is to identify variables that are most important in building a model. Using fewer variables leads to simpler models that not only are easier to understand, but also require less data collection. Secondly, when the number of variables gets too close to the number of data points, there is a risk of overfitting. 
-  
-## Stepwise Linear Regression
-
-Stepwise Linear Regression is a combination of forward selection and backward elimination approaches. At each step in the procedure, the model is evaluated and any variable that no longer seems necessary is removed. The code below illustrates the model built for heating loads.
-
-```
-In [96]
-
-HL_step <- step(Model1_HL, direction = "both")
-summary(HL_step)
-residuals_HL_step <- validate$Heating_Load - predict(HL_step, validate)
-HL_step_Rsqaured <- 1-sum(residuals_HL_step^2)/sum((validate$Heating_Load-mean(validate$Heating_Load))^2)
-HL_step_Rsqaured
-
-```
-
-#### Summary
-
-Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | Stepwise Regression-Variables, R2
--------|------------------|-----------------|------------------------
-Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92
-Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89
-
-
-Stepwise Regression is a type of **Greedy Algotrithm**. At each step, it does the one thing that looks best without taking future options into consideration. Next, we will look at a more refined method that is based on optimization models and considers all options before making a decision.
-
-## Lasso Regression
-
-![Lasso](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Lasso%20Regression.PNG)
-
-Optimization leads the model to choose coefficiencts of the regression equation such that the residual errors are minimal. Lasso Regression adds a constraint to the model such that the sum of the coefficients isn't too large. The restriction ensures that only the most important variables are chosen to build the model. 
-
-Since we are constraining the sum of coefficients, we first need to scale the data.
-
-In [111]
-
-```
-scaledTable <- as.data.frame(scale(table[,c(1,2,3,4,5,6,7,8)]))
-scaledTable <- cbind(scaledtable, table[,c(9,10)]) # Add response variables back in
-install.packages("glmnet")
-library(glmnet)
-lasso_HL <- cv.glmnet(x = as.matrix(scaledTable[, c(1,2,3,4,5,6,7,8)]), y = as.vector(scaledTable[ ,9]), alpha=1, nfolds = 10, type.measure = "mse", family = "gaussian")
-coef(lasso_HL)
-mod_lasso_HL <- lm(Heating_Load~Wall_Area+Overall_Height+Glazing_Area+Glazing_Area_Distribution, data = scaledTable)
-summary(mod_lasso_HL)
-```
-
-Out [111]
-
-```
-Coefficients:
-                          Estimate Std. Error t value Pr(>|t|)    
-(Intercept)                 22.307      0.109  204.61   <2e-16 ***
-Wall_Area                    2.254      0.114   19.83   <2e-16 ***
-Overall_Height               8.341      0.114   73.38   <2e-16 ***
-Glazing_Area                 2.655      0.112   23.78   <2e-16 ***
-Glazing_Area_Distribution    0.316      0.112    2.83   0.0048 ** 
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 3.02 on 763 degrees of freedom
-Multiple R-squared:  0.911,	Adjusted R-squared:  0.91 
-F-statistic: 1.95e+03 on 4 and 763 DF,  p-value: <2e-16
-```
-
-Similar approach can be applied for the Cooling Load. The results are summarized below:
-
-#### Summary
-
-Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | Stepwise Regression-Variables, R2| Lasso Regression-Variables, R2
--------|------------------|-----------------|-----------------|----------
-Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91
-Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88
-
-We see here that Lasso Regression has chosen different explantory variables to meet the restriction. 
-
-For Heating Load, the variables considered to be the most important are: Wall Area, Overall Height, Glazing Area, and Glazing Area Distribution. Note that the p-value for Glazing Area Distribution is 0.01
-
-For Cooling Load, the most important variables are: Relative Compactness, Wall Area, Overall Height, and Glazing Area. All variables had a p-value of less than 0.001.
+# Data Preparation
 
 ## Principal Component Analysis
 
@@ -282,12 +201,95 @@ The output above shows the model in terms of the first five principle components
 
 #### Summary
 
-Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | Stepwise Regression-Variables, R2| Lasso Regression-Variables, R2|PCA-Variables, R2
--------|------------------|-----------------|-----------------|-----------------------|------
-Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91| All, 0.88
-Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88 | All, 0.84
+Models | Multivariate Regression | CV Regression | PCA
+-------|------------------|-----------------|-----------------|-----------------------
+Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96  | All, R2: 0.88, RMSE: 3.75  
+Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21  | All, R2: 0.83, RMSE: 4.01 
 
 While the R-squared values found via PCA are lower than those found from other methods, the constructed model is considered to be of good quality (since R2 > 0.7)
+
+# Feature Extraction
+
+In cases where the number of variables is too large, it might not be possible to refine the models based on the p-values manually. In such scenarios, we might want to employ techniques that will allow us to *extract pertinent features* without manual intervention. The goal of feature extraction techniques is to identify variables that are most important in building a model. Using fewer variables leads to simpler models that not only are easier to understand, but also require less data collection. Secondly, when the number of variables gets too close to the number of data points, there is a risk of overfitting. 
+  
+## Stepwise Linear Regression
+
+Stepwise Linear Regression is a combination of forward selection and backward elimination approaches. At each step in the procedure, the model is evaluated and any variable that no longer seems necessary is removed. The code below illustrates the model built for heating loads.
+
+```
+In [96]
+
+HL_step <- step(Model1_HL, direction = "both")
+summary(HL_step)
+residuals_HL_step <- validate$Heating_Load - predict(HL_step, validate)
+HL_step_Rsqaured <- 1-sum(residuals_HL_step^2)/sum((validate$Heating_Load-mean(validate$Heating_Load))^2)
+HL_step_Rsqaured
+
+```
+
+#### Summary
+
+Models | Multivariate Regression | CV Regression | PCA | Stepwise Regression
+-------|------------------|-----------------|------------------------
+Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96 | All, R2: 0.88, RMSE: 3.75 | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.03
+Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21 | All, R2: 0.83, RMSE: 4.01 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20
+
+
+Stepwise Regression is a type of **Greedy Algotrithm**. At each step, it does the one thing that looks best without taking future options into consideration. Next, we will look at a more refined method that is based on optimization models and considers all options before making a decision.
+
+## Lasso Regression
+
+![Lasso](https://raw.githubusercontent.com/MeeraSharma/Residential-Energy-Efficiency.github.io/master/docs/Lasso%20Regression.PNG)
+
+Optimization leads the model to choose coefficiencts of the regression equation such that the residual errors are minimal. Lasso Regression adds a constraint to the model such that the sum of the coefficients isn't too large. The restriction ensures that only the most important variables are chosen to build the model. 
+
+Since we are constraining the sum of coefficients, we first need to scale the data.
+
+In [111]
+
+```
+scaledTable <- as.data.frame(scale(table[,c(1,2,3,4,5,6,7,8)]))
+scaledTable <- cbind(scaledtable, table[,c(9,10)]) # Add response variables back in
+install.packages("glmnet")
+library(glmnet)
+lasso_HL <- cv.glmnet(x = as.matrix(scaledTable[, c(1,2,3,4,5,6,7,8)]), y = as.vector(scaledTable[ ,9]), alpha=1, nfolds = 10, type.measure = "mse", family = "gaussian")
+coef(lasso_HL)
+mod_lasso_HL <- lm(Heating_Load~Wall_Area+Overall_Height+Glazing_Area+Glazing_Area_Distribution, data = scaledTable)
+summary(mod_lasso_HL)
+```
+
+Out [111]
+
+```
+Coefficients:
+                          Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                 22.307      0.109  204.61   <2e-16 ***
+Wall_Area                    2.254      0.114   19.83   <2e-16 ***
+Overall_Height               8.341      0.114   73.38   <2e-16 ***
+Glazing_Area                 2.655      0.112   23.78   <2e-16 ***
+Glazing_Area_Distribution    0.316      0.112    2.83   0.0048 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 3.02 on 763 degrees of freedom
+Multiple R-squared:  0.911,	Adjusted R-squared:  0.91 
+F-statistic: 1.95e+03 on 4 and 763 DF,  p-value: <2e-16
+```
+
+Similar approach can be applied for the Cooling Load. The results are summarized below:
+
+#### Summary
+
+Models | Multivariate Regression | CV Regression| Stepwise Regression| Lasso Regression
+-------|------------------|-----------------|-----------------|----------
+Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96 | All, R2: 0.88, RMSE: 3.75 | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.03 | WA, OH, GA, GAD, R2: 0.91, RMSE: 3.47
+Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21 | All, R2: 0.83, RMSE: 4.01 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | WA, OH, GA, R2: 0.88, RMSE: 3.54
+
+We see here that Lasso Regression has chosen different explantory variables to meet the restriction. 
+
+For Heating Load, the variables considered to be the most important are: Wall Area, Overall Height, Glazing Area, and Glazing Area Distribution. Note that the p-value for Glazing Area Distribution is 0.01
+
+For Cooling Load, the most important variables are: Relative Compactness, Wall Area, Overall Height, and Glazing Area. All variables had a p-value of less than 0.001.
 
 # Classification and Regression Trees
 
@@ -359,10 +361,10 @@ The same process can be applied to the Cooling Loads.
 
 #### Summary
 
-Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | Stepwise Regression-Variables, R2| Lasso Regression-Variables, R2|PCA-Variables, R2 | CARTVariables, R2
+Models | Multivariate Regression | CV Regression| Stepwise Regression| Lasso Regression| CART
 -------|------------------|-----------------|-----------------|-----------------------|------|---------
-Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91| All, 0.88| GA, OH, RC 0.95
-Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88 | All, 0.84| GA, RC, WA 0.90
+Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96 | All, R2: 0.88, RMSE: 3.75 | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.03 | WA, OH, GA, GAD, R2: 0.91, RMSE: 3.47 | R2: 0.95, RMSE: 2.33
+Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21 | All, R2: 0.83, RMSE: 4.01 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | WA, OH, GA, R2: 0.88, RMSE: 3.54 | R2: 0.90, RMSE: 2.96
 
 We can see how the **Classification and Regression Trees** has led to a sharp increase in the R-squared value. 
 
@@ -422,10 +424,10 @@ The same process can be followed for Cooling Loads.
 
 #### Summary
 
-Models | Multivariate Regression-Variables, R2 | CV Regression-Variables, R2 | Stepwise Regression-Variables, R2| Lasso Regression-Variables, R2|PCA-Variables, R2 | CARTVariables, R2 | RF-R2
+Models | Multivariate Regression | CV Regression| Stepwise Regression| Lasso Regression| CART | RF
 -------|------------------|-----------------|-----------------|-----------------------|------|---------|------------
-Heating Load | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.91 | RC, SA, WA, OH, GA, 0.92 | WA, OH, GA, GAD, 0.91| All, 0.88| GA, OH, RC 0.95 | 0.995
-Cooling Load | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, SA, WA, OH, GA, 0.89 | RC, WA, OH, GA, 0.88 | All, 0.84| GA, RC, WA 0.90 | 0.96
+Heating Load | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.01 | RC, SA, WA, OH, GA, R2: 0.91, RMSE: 2.96 | All, R2: 0.88, RMSE: 3.75 | RC, SA, WA, OH, GA, R2: 0.92, RMSE: 3.03 | WA, OH, GA, GAD, R2: 0.91, RMSE: 3.47 | R2: 0.95, RMSE: 2.33 | R2: 0.995, RMSE: 3.75
+Cooling Load | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.21 | All, R2: 0.83, RMSE: 4.01 | RC, SA, WA, OH, GA, R2: 0.89, RMSE: 3.20 | WA, OH, GA, R2: 0.88, RMSE: 3.54 | R2: 0.90, RMSE: 2.96 | R2: 0.96, RMSE: 4.01
 
 # Conclusion
 
