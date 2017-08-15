@@ -70,6 +70,7 @@ RMSE_CV_HL <- sqrt(attr(CV_HL, "ms"))
 SS_res_CV_HL <-  attr(CV_HL,"ms")*nrow(table)
 SS_tot_CV_HL <- sum((table$Heating_Load - mean(table$Heating_Load))^2)
 CV_HL_Rsqaured <- 1-SS_res_CV_HL/SS_tot_CV_HL
+RMSE_CV_HL
 x_HL <- validate$Heating_Load
 y_HL <- predict(Model_HL_CV, validate)
 reg_HL_CV <- lm(y_HL ~ x_HL, data = validate)
@@ -84,13 +85,14 @@ RMSE_CV_CL <- sqrt(attr(CV_CL, "ms"))
 SSE_res_CV_CL <-  attr(CV_CL,"ms")*nrow(table)
 SS_tot_CV_CL <- sum((table$Cooling_Load - mean(table$Cooling_Load))^2)
 CV_CL_Rsqaured <- 1-SSE_res_CV_CL/SS_tot_CV_CL
+RMSE_CV_CL
 x_CL <- validate$Cooling_Load
 y_CL <- predict(Model_CL_CV, validate)
 reg_CL_CV <- lm(y_CL ~ x_CL, data = validate)
 plot(validate$Cooling_Load, predict(Model_CL_CV, validate), xlab = "Actual Cooling Load", ylab = "Predicted Cooling Load", type = "p")
 abline(reg_CL_CV, col = "blue")
 
-#Variable Selection
+#Feature Extraction
 
 #Step-wise
 HL_step <- step(Model1_HL, direction = "both")
@@ -98,35 +100,52 @@ summary(HL_step)
 residuals_HL_step <- validate$Heating_Load - predict(HL_step, validate)
 HL_step_Rsqaured <- 1-sum(residuals_HL_step^2)/sum((validate$Heating_Load-mean(validate$Heating_Load))^2)
 HL_step_Rsqaured
-
+MSE_HL_step <- (sum((residuals_HL_step)^2))/nrow(validate)
+RMSE_HL_step <- sqrt(MSE_HL_step)
+RMSE_HL_step
+  
 CL_step <- step(Model1_CL, direction = "both")
 summary(CL_step)
 residuals_CL_step <- validate$Cooling_Load - predict(CL_step, validate)
 CL_step_Rsqaured <- 1-sum(residuals_CL_step^2)/sum((validate$Cooling_Load-mean(validate$Cooling_Load))^2)
 CL_step_Rsqaured
+MSE_CL_step <- (sum((residuals_CL_step)^2))/nrow(validate)
+RMSE_CL_step <- sqrt(MSE_CL_step)
+RMSE_CL_step
 
-#Lasso and Ridge Regression - Feature Extraction - Peanalized Maximum Likelihood
+#Lasso Regression - Feature Extraction - Peanalized Maximum Likelihood
 
 #Scaling the Data - except response variables
-scaledTable <- as.data.frame(scale(table[,c(1,2,3,4,5,6,7,8)]))
-scaledTable <- cbind(scaledtable, table[,c(9,10)]) # Add response variables back in
+scaledTrain <- as.data.frame(scale(train[,c(1,2,3,4,5,6,7,8)]))
+scaledTrain <- cbind(scaledTrain, train[,c(9,10)]) # Add response variables back in
+
+scaledValidate <- as.data.frame(scale(validate[,c(1,2,3,4,5,6,7,8)]))
+scaledValidate <- cbind(scaledValidate, validate[,c(9,10)]) # Add response variables back in
 
 install.packages("glmnet")
 library(glmnet)
 
-lasso_HL <- cv.glmnet(x = as.matrix(scaledTable[, c(1,2,3,4,5,6,7,8)]), y = as.vector(scaledTable[ ,9]), alpha=1, nfolds = 10, type.measure = "mse", family = "gaussian")
+lasso_HL <- cv.glmnet(x = as.matrix(scaledTrain[, c(1,2,3,4,5,6,7,8)]), y = as.vector(scaledTrain[ ,9]), alpha=1, nfolds = 10, type.measure = "mse", family = "gaussian")
 coef(lasso_HL)
-mod_lasso_HL <- lm(Heating_Load~Wall_Area+Overall_Height+Glazing_Area+Glazing_Area_Distribution, data = scaledTable)
+mod_lasso_HL <- lm(Heating_Load~Wall_Area+Overall_Height+Glazing_Area+Glazing_Area_Distribution, data = scaledTrain)
 summary(mod_lasso_HL)
+residuals_mod_lasso_HL <- scaledValidate$Heating_Load - predict(mod_lasso_HL, scaledValidate)
+MSE_lasso_HL <- (sum(residuals_mod_lasso_HL^2)/nrow(scaledValidate))
+RMSE_lasso_HL <- sqrt(MSE_lasso_HL)
+RMSE_lasso_HL
 
-lasso_CL <- cv.glmnet(x = as.matrix(scaledTable[, c(1,2,3,4,5,6,7,8)]), y = as.vector(scaledTable[ ,10]), alpha=1, nfolds = 10, type.measure = "mse", family = "gaussian")
+lasso_CL <- cv.glmnet(x = as.matrix(scaledTable[, c(1,2,3,4,5,6,7,8)]), y = as.vector(scaledTrain[ ,10]), alpha=1, nfolds = 10, type.measure = "mse", family = "gaussian")
 coef(lasso_CL)
-mod_lasso_CL <- lm(Cooling_Load~Relative_Compactness+Wall_Area+Overall_Height+Orientation+Glazing_Area, data = scaledTable)
+mod_lasso_CL <- lm(Cooling_Load~Wall_Area+Overall_Height+Glazing_Area, data = scaledTrain)
 summary(mod_lasso_CL)
+residuals_mod_lasso_CL <- scaledValidate$Cooling_Load - predict(mod_lasso_CL, scaledValidate)
+MSE_lasso_CL <- (sum(residuals_mod_lasso_CL^2)/nrow(scaledValidate))
+RMSE_lasso_CL <- sqrt(MSE_lasso_CL)
+RMSE_lasso_CL
 
 #Principle Component Analysis
 
-pca <- prcomp(table[, 1:8], scale. = TRUE)
+pca <- prcomp(train[, 1:8], scale. = TRUE)
 summary(pca)
 screeplot(pca, type = "lines", col = "blue")
 var <- pca$sdev^2
@@ -137,26 +156,45 @@ plot(cumsum(propvar), xlab = "Principal Component", ylab = "Cumulative Proportio
 # Getting the first 5 principal components
 PCs <- pca$x[,1:5]
 
-# Build linear regression model with the first 5 principal components
-PC_HL <- cbind(PCs, table[,9])
-PC_HL_model <- lm(V6~., data = as.data.frame(PC_HL))
-summary(PC_HL_model)
-Intercept_HL <- PC_HL_model$coefficiencts[1]
-betas_HL <- PC_HL_model$coefficients[2:6]
-betas_HL
+install.packages("pls")
+library(pls)
 
-alphas_HL <- pca$rotation[,2:6] %*% betas_HL
-t(alphas_HL)
+# Run principal component regression function with only the first 5 principal components
 
-PC_CL <- cbind(PCs, table[,10])
-PC_CL_model <- lm(V6~., data = as.data.frame(PC_CL))
-summary(PC_CL_model)
-Intercept_CL <- PC_CL_model$coefficiencts[1]
-betas_CL <- PC_CL_model$coefficients[2:6]
-betas_CL
+numcomp <- 5
+pcr.fit_HL <- pcr(Heating_Load ~ Relative_Compactness+Surface_Area+Wall_Area+Roof_Area+Overall_Height+Orientation+Glazing_Area+Glazing_Area_Distribution, data = train, scale = TRUE, ncomp = numcomp)
+summary(pcr.fit_HL)
 
-alphas_CL <- pca$rotation[,2:6] %*% betas_CL
-t(alphas_CL)
+pcr.fit_HL$scores
+coef(pcr.fit_HL)
+
+pcr.pred_HL <- predict(pcr.fit_HL, validate, ncomp = numcomp)
+
+SStot_HL <- sum((validate$Heating_Load - mean(validate$Heating_Load))^2)
+
+SSres.pred_HL <- sum((pcr.pred_HL - validate$Heating_Load)^2)
+R2.pred_HL <- 1 - SSres.pred_HL/SStot_HL
+R2.pred_HL
+
+RMSE_pred_HL <- sqrt(SSres.pred_HL/nrow(validate))
+RMSE_pred_HL
+
+pcr.fit_CL <- pcr(Cooling_Load ~ Relative_Compactness+Surface_Area+Wall_Area+Roof_Area+Overall_Height+Orientation+Glazing_Area+Glazing_Area_Distribution, data = train, scale = TRUE, ncomp = numcomp)
+summary(pcr.fit_CL)
+
+pcr.fit_CL$scores
+coef(pcr.fit_CL)
+
+pcr.pred_CL <- predict(pcr.fit_CL, validate, ncomp = numcomp)
+
+SStot_CL <- sum((validate$Cooling_Load - mean(validate$Cooling_Load))^2)
+
+SSres.pred_CL <- sum((pcr.pred_CL - validate$Cooling_Load)^2)
+R2.pred_CL <- 1 - SSres.pred_CL/SStot_CL
+R2.pred_CL
+
+RMSE_pred_CL <- sqrt(SSres.pred_CL/nrow(validate))
+RMSE_pred_CL
 
 #Classification and Regression Trees
 # does recursive partioning
@@ -185,6 +223,8 @@ abline(0,0)
 SStot.prune.tree.validate_HL <- sum((validate$Heating_Load - mean(validate$Heating_Load))^2)
 R2.prune.tree.validate_HL <- 1 - SSres.prune.tree.validate_HL/SStot.prune.tree.validate_HL
 R2.prune.tree.validate_HL
+RMSE_prune.tree.validate_HL <- sqrt((SSres.prune.tree.validate_HL)/nrow(validate))
+RMSE_prune.tree.validate_HL
 
 #Cooling Load
 
@@ -210,6 +250,8 @@ abline(0,0)
 SStot.prune.tree.validate_CL <- sum((validate$Cooling_Load - mean(validate$Cooling_Load))^2)
 R2.prune.tree.validate_CL <- 1 - SSres.prune.tree.validate_CL/SStot.prune.tree.validate_CL
 R2.prune.tree.validate_CL
+RMSE_prune.tree.validate_CL <- sqrt((SSres.prune.tree.validate_CL)/nrow(validate))
+RMSE_prune.tree.validate_CL
 
 #Random Forests
 install.packages("randomForest")
@@ -234,6 +276,9 @@ R2_rf
 importance(rf.train_HL)
 varImpPlot(rf.train_HL)
 
+RMSE_rf_HL <-  sqrt((SSres.pred_HL)/nrow(validate))
+RMSE_rf_HL
+
 # Cooling Load
 numpred <- 3
 rf.train_CL <- randomForest(Cooling_Load~Relative_Compactness+Surface_Area+Wall_Area+Roof_Area+Overall_Height+Orientation+Glazing_Area+Glazing_Area_Distribution, data = train, mtry = numpred, importance = TRUE)
@@ -251,3 +296,6 @@ R2_rf_CL <- 1- SSres_rf_CL/SStot_rf_CL
 R2_rf_CL
 importance(rf.train_CL)
 varImpPlot(rf.train_CL)
+
+RMSE_rf_CL <-  sqrt((SSres.pred_CL)/nrow(validate))
+RMSE_rf_CL
