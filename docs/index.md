@@ -285,7 +285,7 @@ Similar approach can be applied for the Cooling Load. The results are summarized
 
 #### Model Statistics
 
-Models | Multivariate Regression | CV Regression| Stepwise Regression| Lasso Regression
+Models | Multivariate Regression | CV Regression| PCA | Stepwise Regression| Lasso Regression
 -------|------------------|-----------------|-----------------|----------
 Heating Load | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.01 | RC, SA, WA, OH, GA; R2: 0.91; RMSE: 2.96 | All; R2: 0.88; RMSE: 3.75 | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.03 | WA, OH, GA, GAD; R2: 0.91; RMSE: 3.47
 Cooling Load | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.21 | All; R2: 0.83; RMSE: 4.01 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20 | WA, OH, GA; R2: 0.88; RMSE: 3.54
@@ -366,7 +366,7 @@ The same process can be applied to the Cooling Loads.
 
 #### Model Statistics
 
-Models | Multivariate Regression | CV Regression| Stepwise Regression| Lasso Regression| CART
+Models | Multivariate Regression | CV Regression| PCA | Stepwise Regression| Lasso Regression| CART
 -------|------------------|-----------------|-----------------|-----------------------|------|---------
 Heating Load | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.01 | RC, SA, WA, OH, GA; R2: 0.91; RMSE: 2.96 | All; R2: 0.88; RMSE: 3.75 | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.03 | WA, OH, GA, GAD; R2: 0.91; RMSE: 3.47 | R2: 0.95; RMSE: 2.33
 Cooling Load | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.21 | All; R2: 0.83; RMSE: 4.01 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20 | WA, OH, GA; R2: 0.88; RMSE: 3.54 | R2: 0.90; RMSE: 2.96
@@ -429,7 +429,7 @@ The same process can be followed for Cooling Loads.
 
 #### Model Statistics
 
-Models | Multivariate Regression | CV Regression| Stepwise Regression| Lasso Regression| CART | RF
+Models | Multivariate Regression | CV Regression| PCA | Stepwise Regression| Lasso Regression| CART | RF
 -------|------------------|-----------------|-----------------|-----------------------|------|---------|------------
 Heating Load | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.01 | RC, SA, WA, OH, GA; R2: 0.91; RMSE: 2.96 | All; R2: 0.88; RMSE: 3.75 | RC, SA, WA, OH, GA; R2: 0.92; RMSE: 3.03 | WA, OH, GA, GAD; R2: 0.91; RMSE: 3.47 | R2: 0.95; RMSE: 2.33 | R2: 0.995; RMSE: 3.75
 Cooling Load | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.21 | All; R2: 0.83; RMSE: 4.01 | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20 | WA, OH, GA; R2: 0.88; RMSE: 3.54 | R2: 0.90; RMSE: 2.96 | R2: 0.96; RMSE: 4.01
