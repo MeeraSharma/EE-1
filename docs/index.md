@@ -6,9 +6,9 @@ Models are trained on 80% of the available data and validated on the remaining 2
 The data preparation and model building approaches considered include:
 
 * [Basic Linear Regression](#basic-linear-regression)
-* [Data Preparation](#data-preparation)
-  * [Principal Component Analysis](#principal-component-analysis)
 * [Feature Extraction](#feature-extraction)
+  * [Principal Component Analysis](#principal-component-analysis)
+* [Variable Selection](#variable-selection)
   * [Stepwise Linear Regression](#stepwise-linear-regression)
   * [Lasso Regression](#lasso-regression)
  * [Classification and Regression Trees](#classification-and-regression-trees)
@@ -124,7 +124,7 @@ Cooling Load | RC, SA, WA, OH, GA; R2: 0.89; RMSE: 3.20 | RC, SA, WA, OH, GA; R2
 
 The R-squared values obtained from the two techniques are pretty close to each other for both Heating as well as Cooling Loads. The Root Mean Squared Error for Heating Loads is found to be lower for CV Regression and is only slighttly higher for Cooling Loads, suggesting that Crossvalidated Regression is better than Basic Multivariate Regression. 
 
-# Data Preparation
+# Feature Extraction
 
 In situations where a large number of variables are present in a dataset and high collinearity is evident, we might benefit from a technique called Principal Component Analysis. 
 
@@ -206,7 +206,7 @@ Cooling Load | RC, SA, WA, OH, GA;R2: 0.89; RMSE: 3.20 | RC, SA, WA, OH, GA; R2:
 
 The model obtained as a result of Principal Component Analysis leads lower R-sqaured and higher RMSE values for the validation dataset. Therefore, while PCA is a useful technique for high dimensional data, we are probably better off without it.
 
-# Feature Extraction
+# Variable Selection
 
 Now that we have settled on using our dataset as is, let us consider a few methods that can help build a focused model. We saw previously that we can select important variables in a model based on their associate p-values. While this technique worked for us (given the small number of variables), how can we tackle large number of variables? Feature Extraction!
 
